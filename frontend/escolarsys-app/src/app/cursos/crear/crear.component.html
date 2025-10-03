@@ -1,0 +1,42 @@
+<div class="container mt-4">
+  <h2>➕ Crear Curso</h2>
+
+  <form (ngSubmit)="crearCurso()">
+    <div class="mb-3">
+      <label class="form-label">Nombre</label>
+      <input type="text" [(ngModel)]="curso.nombre" name="nombre" class="form-control" required />
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Descripción</label>
+      <textarea [(ngModel)]="curso.descripcion" name="descripcion" class="form-control"></textarea>
+    </div>
+
+    <div class="mb-3" style="max-width: 400px;">
+      <label class="form-label">Profesor</label>
+      <select [(ngModel)]="curso.profesorId" name="profesorId" class="form-select form-select-sm" required>
+        <option [ngValue]="null">Seleccione un profesor</option>
+        <option *ngFor="let prof of profesores" [ngValue]="prof.id">
+          {{ prof.nombre }} ({{ prof.email }})
+        </option>
+      </select>
+    </div>
+
+    <!-- Estudiantes (multi-select) -->
+    <div class="mb-3">
+      <label class="form-label">Estudiantes</label>
+      <select multiple [(ngModel)]="curso.estudiantesIds" name="estudiantesIds" class="form-select">
+        <option *ngFor="let estudiante of estudiantes" [value]="estudiante.id">
+          {{ estudiante.nombre }}
+        </option>
+      </select>
+    </div>
+
+    
+    <div class="mt-4 d-flex gap-2">
+      <button class="btn btn-success" type="submit">Guardar</button>
+      <button routerLink="/cursos" class="btn btn-secondary">Cancelar</button>
+    </div>
+  </form>
+</div>
+

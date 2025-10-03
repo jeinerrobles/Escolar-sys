@@ -1,0 +1,32 @@
+<div class="container mt-4">
+  <h2>📚 Gestión de Cursos</h2>
+
+  <button routerLink="/cursos/crear" class="btn btn-primary mb-3">
+    ➕ Crear Curso
+  </button>
+
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Descripción</th>
+        <th>Profesor</th>
+        <th>Estudiantes</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let curso of cursos">
+        <td>{{ curso.nombre }}</td>
+        <td>{{ curso.descripcion }}</td>
+        <td>{{ curso.profesor?.nombre || 'No asignado' }}</td>
+        <td>{{ curso.estudiantes?.length || 0 }}</td>
+        <td>
+          <button [routerLink]="['/cursos/editar', curso.id]" class="btn btn-sm btn-warning me-2">✏️ Editar</button>
+          <button (click)="eliminar(curso.id)" class="btn btn-sm btn-danger">🗑️ Eliminar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
