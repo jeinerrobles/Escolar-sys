@@ -3,23 +3,24 @@ import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from './auth.guard';
 import { LoginComponent } from './auth/login/login.component';
 import { RegisterComponent } from './auth/register/register.component';
-import { ListComponent } from './materias/list/list.component';
-import { DetailComponent } from './materias/detail/detail.component';
+import { MainLayoutComponent } from './layouts/main-layout/main-layout.component'; // 👈 IMPORTANTE
+import { LoginGuard } from './login.guard';
 
 const routes: Routes = [
+  { path: 'login', component: LoginComponent, canActivate: [LoginGuard] },
+  { path: 'register', component: RegisterComponent, canActivate: [LoginGuard] },
   { path: '', loadChildren: () => import('./home/home.module').then(m => m.HomeModule) },
-  { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegisterComponent },
-  { 
-    path: 'materias', 
-    loadChildren: () => import('./materias/materias.module').then(m => m.MateriasModule),
-    canActivate: [AuthGuard]
+
+  {
+    path: '',
+    component: MainLayoutComponent,
+    canActivate: [AuthGuard],
+    children: [
+      { path: 'materias', loadChildren: () => import('./materias/materias.module').then(m => m.MateriasModule) },
+      { path: 'cursos', loadChildren: () => import('./cursos/cursos.module').then(m => m.CursosModule) }
+    ]
   },
-  { 
-    path: 'cursos', 
-    loadChildren: () => import('./cursos/cursos.module').then(m => m.CursosModule),
-    canActivate: [AuthGuard]
-  },
+
   { path: '**', redirectTo: '' }
 ];
 
@@ -28,3 +29,4 @@ const routes: Routes = [
   exports: [RouterModule]
 })
 export class AppRoutingModule { }
+

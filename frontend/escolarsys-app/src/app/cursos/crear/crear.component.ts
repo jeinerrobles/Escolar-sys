@@ -8,9 +8,10 @@ import { CursosService } from '../cursos.service';
   styleUrls: ['./crear.component.scss']
 })
 export class CrearComponent implements OnInit {
-  curso = { nombre: '', descripcion: '', profesorId: null, estudiantesIds: [] };
+  curso: { nombre: string; descripcion: string; profesorId: number | null; estudiantesIds: number[] } = { nombre: '', descripcion: '', profesorId: null, estudiantesIds: [] };
   profesores: any[] = [];
   estudiantes: any[] = [];
+  selectAll: boolean = false;
 
   constructor(
     private cursosService: CursosService,
@@ -26,7 +27,16 @@ export class CrearComponent implements OnInit {
     });
   }
 
+  toggleAllEstudiantes() {
+    this.estudiantes.forEach((e) => (e.seleccionado = this.selectAll));
+  }
+
   crearCurso() {
+    // Recolectar IDs seleccionados
+    this.curso.estudiantesIds = this.estudiantes
+      .filter((e) => e.seleccionado)
+      .map((e) => e.id);
+
     this.cursosService.createCurso(this.curso).subscribe(() => {
       this.router.navigate(['/cursos']);
     });

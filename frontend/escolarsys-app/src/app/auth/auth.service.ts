@@ -11,12 +11,13 @@ export class AuthService {
   constructor(private http: HttpClient) {}
 
   login(credentials: { email: string; password: string }): Observable<any> {
-    return this.http.post(`${this.apiUrl}/login`, credentials).pipe(
-      tap((res: any) => {
-        localStorage.setItem('token', res.token);
-      })
-    );
-  }
+  return this.http.post(`${this.apiUrl}/login`, credentials).pipe(
+    tap((res: any) => {
+      localStorage.setItem('token', res.token);
+      localStorage.setItem('user', JSON.stringify(res.user)); // 👈 guardar datos del usuario
+    })
+  );
+}
 
   register(data: { nombre: string; email: string; password: string; role: string }): Observable<any> {
     return this.http.post(`${this.apiUrl}/register`, data);
@@ -30,7 +31,18 @@ export class AuthService {
     return localStorage.getItem('token');
   }
 
+  getCurrentUser(): any {
+  const userData = localStorage.getItem('user');
+  return userData ? JSON.parse(userData) : null;
+  }
+
   isLoggedIn(): boolean {
     return !!this.getToken();
   }
+
+  getUserRole(): string | null {
+  const user = this.getCurrentUser();
+  return user ? user.role : null;
+  }
+  
 }

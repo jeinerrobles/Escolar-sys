@@ -1,0 +1,71 @@
+<div class="main-layout">
+  <!-- Sidebar -->
+  <nav [class.collapsed]="isSidebarCollapsed" class="sidebar">
+    <div class="sidebar-header">
+      <h3>🎓 EscolarSys</h3>
+      <button class="btn btn-sm btn-toggle" (click)="toggleSidebar()">
+        <i class="bi" [ngClass]="isSidebarCollapsed ? 'bi-list' : 'bi-x'"></i>
+      </button>
+    </div>
+
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <a routerLink="/cursos" routerLinkActive="active" class="nav-link">
+          <i class="bi bi-book"></i>
+          <span *ngIf="!isSidebarCollapsed">Cursos</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/materias" routerLinkActive="active" class="nav-link">
+          <i class="bi bi-journal-text"></i>
+          <span *ngIf="!isSidebarCollapsed">Materias</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/" routerLinkActive="active" class="nav-link">
+          <i class="bi bi-house"></i>
+          <span *ngIf="!isSidebarCollapsed">Inicio</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Main content -->
+  <div class="content-area">
+    <!-- Topbar -->
+    <header class="topbar d-flex justify-content-between align-items-center px-3 py-2">
+      <div class="d-flex align-items-center">
+        <button class="btn btn-outline-light d-md-none me-2" (click)="toggleSidebar()">
+          <i class="bi bi-list"></i>
+        </button>
+        <h5 class="m-0">Panel Administrativo</h5>
+      </div>
+
+      <div class="user-info dropdown">
+        <a
+          class="d-flex align-items-center text-decoration-none dropdown-toggle text-light"
+          id="userDropdown"
+          role="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          <img src="https://ui-avatars.com/api/?name={{user?.nombre}}&background=0D8ABC&color=fff" class="rounded-circle me-2" width="35" height="35" />
+          <div class="text-start">
+            <div class="fw-semibold">{{ user?.nombre || 'Usuario' }}</div>
+            <small class="text-secondary">{{ user?.role || 'Sin rol' }}</small>
+          </div>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+          <li><a class="dropdown-item" href="#">Perfil</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item text-danger" (click)="logout()">Cerrar sesión</a></li>
+        </ul>
+      </div>
+    </header>
+
+    <main class="p-4">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>
+

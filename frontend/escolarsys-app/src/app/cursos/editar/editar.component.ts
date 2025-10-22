@@ -11,6 +11,7 @@ export class EditarComponent implements OnInit {
   curso: any = { nombre: '', descripcion: '', profesorId: null, estudiantesIds: [] };
   profesores: any[] = [];
   estudiantes: any[] = [];
+  selectAll: boolean = false;
 
   constructor(
     private cursosService: CursosService,
@@ -30,17 +31,34 @@ export class EditarComponent implements OnInit {
         profesorId: data.profesor?.id,
         estudiantesIds: data.estudiantes?.map((e: any) => e.id) || []
       };
+
+      // Cargar estudiantes y marcar seleccionados
+      this.cursosService.getEstudiantes().subscribe((estudiantes) => {
+        this.estudiantes = estudiantes.map((e: any) => ({
+          ...e,
+          seleccionado: this.curso.estudiantesIds.includes(e.id)
+        }));
+      });
     });
 
-    // Cargar profesores y estudiantes
+    // Cargar profesores
     this.cursosService.getProfesores().subscribe((data) => (this.profesores = data));
-    this.cursosService.getEstudiantes().subscribe((data) => (this.estudiantes = data));
+  }
+
+  toggleAllEstudiantes() {
+    this.estudiantes.forEach((e) => (e.seleccionado = this.selectAll));
   }
 
   actualizarCurso() {
+    // Recolectar IDs seleccionados
+    this.curso.estudiantesIds = this.estudiantes
+      .filter((e) => e.seleccionado)
+      .map((e) => e.id);
+
     this.cursosService.updateCurso(this.curso.id, this.curso).subscribe(() => {
       this.router.navigate(['/cursos']);
     });
   }
 }
+
 
