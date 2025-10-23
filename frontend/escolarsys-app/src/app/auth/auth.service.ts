@@ -1,6 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
+import { Router } from '@angular/router';
+
+interface DecodedToken {
+  id: number;
+  role: string;
+  exp: number;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -8,7 +15,7 @@ import { Observable, tap } from 'rxjs';
 export class AuthService {
   private apiUrl = 'http://localhost:4000/api/auth'; // tu backend
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   login(credentials: { email: string; password: string }): Observable<any> {
   return this.http.post(`${this.apiUrl}/login`, credentials).pipe(

@@ -6,6 +6,7 @@ import authRoutes from './routes/auth.routes';
 import userRoutes from './routes/user.routes';
 import materiaRoutes from './routes/materia.routes';
 import cursoRoutes from './routes/curso.routes';
+import usuarioRoutes from './routes/usuario.routes';
 
 dotenv.config();
 
@@ -18,6 +19,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/materias", materiaRoutes);
 app.use("/api/cursos", cursoRoutes);
+app.use("/api/usuarios", usuarioRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', env: process.env.NODE_ENV || 'development' });

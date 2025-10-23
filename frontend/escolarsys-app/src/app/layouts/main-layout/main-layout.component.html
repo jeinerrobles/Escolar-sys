@@ -22,6 +22,12 @@
         </a>
       </li>
       <li class="nav-item">
+        <a routerLink="/usuarios" routerLinkActive="active" class="nav-link">
+          <i class="bi bi-person-plus"></i>
+          <span *ngIf="!isSidebarCollapsed">Gestión de usuarios</span>
+        </a>
+      </li>
+      <li class="nav-item">
         <a routerLink="/" routerLinkActive="active" class="nav-link">
           <i class="bi bi-house"></i>
           <span *ngIf="!isSidebarCollapsed">Inicio</span>

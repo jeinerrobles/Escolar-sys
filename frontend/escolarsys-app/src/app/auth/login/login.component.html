@@ -28,14 +28,8 @@
           <i class="fas fa-lock me-2"></i>Contraseña
         </label>
         <div class="input-group">
-          <input [(ngModel)]="password" name="password" id="password"
-                 [type]="showPassword ? 'text' : 'password'"
-                 class="form-control" placeholder="********"
-                 required minlength="6" #passwordInput="ngModel">
-          <button type="button" class="btn btn-outline-secondary"
-                  (click)="togglePassword()">
-            <i class="fas" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
-          </button>
+          <input [(ngModel)]="password" name="password" id="password" [type]="showPassword ? 'text' : 'password'"
+            class="form-control" placeholder="********" required minlength="6" #passwordInput="ngModel">
         </div>
         <div *ngIf="passwordInput.invalid && passwordInput.touched" class="invalid-feedback d-block">
           La contraseña debe tener al menos 6 caracteres.
