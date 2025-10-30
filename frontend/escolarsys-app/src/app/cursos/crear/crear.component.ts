@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CursosService } from '../cursos.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-crear-curso',
@@ -15,7 +16,7 @@ export class CrearComponent implements OnInit {
 
   constructor(
     private cursosService: CursosService,
-    private router: Router) {}
+    private router: Router) { }
 
   ngOnInit() {
     this.cursosService.getProfesores().subscribe((data) => {
@@ -38,7 +39,17 @@ export class CrearComponent implements OnInit {
       .map((e) => e.id);
 
     this.cursosService.createCurso(this.curso).subscribe(() => {
-      this.router.navigate(['/cursos']);
+      Swal.fire({
+        title: 'Curso creado',
+        text: 'Curso creado correctamente',
+        icon: 'success',
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 2000
+      }).then(() => {
+        this.router.navigate(['/cursos']);
+      });
     });
   }
 }

@@ -1,0 +1,42 @@
+<div class="container mt-4">
+  <div class="card shadow-sm">
+    <div class="card-header bg-primary text-white">
+      <h5 class="mb-0">
+        <i class="bi" [ngClass]="editMode ? 'bi-pencil' : 'bi-person-plus'"></i>
+        {{ editMode ? 'Editar Usuario' : 'Crear Usuario' }}
+      </h5>
+    </div>
+    <div class="card-body">
+      <form (ngSubmit)="guardarUsuario()" #form="ngForm">
+        <div class="mb-3">
+          <label>Nombre</label>
+          <input type="text" class="form-control" [(ngModel)]="usuario.nombre" name="nombre" required />
+        </div>
+
+        <div class="mb-3">
+          <label>Email</label>
+          <input type="email" class="form-control" [(ngModel)]="usuario.email" name="email" required />
+        </div>
+
+        <div class="mb-3" *ngIf="!editMode">
+          <label>Contraseña</label>
+          <input type="password" class="form-control" [(ngModel)]="usuario.password" name="password" required />
+        </div>
+
+        <div class="mb-3">
+          <label>Rol</label>
+          <select class="form-select" [(ngModel)]="usuario.role" name="role">
+            <option value="admin">Administrador</option>
+            <option value="profesor">Profesor</option>
+            <option value="estudiante">Estudiante</option>
+          </select>
+        </div>
+
+        <div class="mt-4 d-flex gap-2">
+            <button class="btn btn-success" type="submit">Guardar</button>
+            <button routerLink="/usuarios" class="btn btn-secondary">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CursosService } from '../cursos.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-editar-curso',
@@ -17,7 +18,7 @@ export class EditarComponent implements OnInit {
     private cursosService: CursosService,
     private route: ActivatedRoute,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -56,7 +57,17 @@ export class EditarComponent implements OnInit {
       .map((e) => e.id);
 
     this.cursosService.updateCurso(this.curso.id, this.curso).subscribe(() => {
-      this.router.navigate(['/cursos']);
+      Swal.fire({
+        title: 'Curso Actualizado',
+        text: 'Curso actualizado correctamente',
+        icon: 'success',
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 2000
+      }).then(() => {
+        this.router.navigate(['/cursos']);
+      });
     });
   }
 }

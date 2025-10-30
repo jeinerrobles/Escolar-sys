@@ -1,14 +1,12 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { ListComponent } from './list/list.component';
-import { CreateComponent } from './create/create.component';
-import { EditComponent } from './edit/edit.component';
-import { AuthGuard } from '../auth.guard';
+import { UsuarioFormComponent } from './usuario-form/usuario-form.component';
+import { UsuariosComponent } from './usuarios.component';
 
 const routes: Routes = [
-  { path: '', component: ListComponent},
-  { path: 'crear', component: CreateComponent},
-  { path: 'editar/:id', component: EditComponent},
+  { path: '', component: UsuariosComponent },
+  { path: 'crear', component: UsuarioFormComponent },
+  { path: 'editar/:id', component: UsuarioFormComponent },
 ];
 
 @NgModule({
