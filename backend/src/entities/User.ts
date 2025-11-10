@@ -36,9 +36,6 @@ export class User {
   @OneToMany(() => Materia, (materia) => materia.profesor)
   materiasDictadas!: Materia[];
 
-  @ManyToMany(() => Materia, (materia) => materia.estudiantes)
-  materiasInscritas!: Materia[];
-
     // Cursos que dicta (si es profesor)
   @OneToMany(() => Curso, curso => curso.profesor)
   cursosDictados!: Curso[];
@@ -46,5 +43,9 @@ export class User {
   // Cursos inscritos (si es estudiante)
   @ManyToMany(() => Curso, curso => curso.estudiantes)
   cursosTomados!: Curso[];
+
+  @OneToMany(() => Materia, materia => materia.profesor)
+  materias!: Materia[];
+
 }
 

@@ -11,5 +11,6 @@ router.put("/:id", authenticateJWT, authorizeRoles("admin"), CursoController.upd
 router.delete("/:id", authenticateJWT, authorizeRoles("admin"), CursoController.delete);
 router.post("/:id/profesor/:profesorId", authenticateJWT, authorizeRoles("admin"), CursoController.assignProfesor);
 router.post("/:id/estudiantes", authenticateJWT, authorizeRoles("admin"), CursoController.assignEstudiantes);
+router.post("/:id/grado/:gradoId", authenticateJWT, authorizeRoles("admin"), CursoController.assignGrado);
 
 export default router;

@@ -29,4 +29,9 @@ export class UsuariosService {
   deleteUsuario(id: number): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}/${id}`);
   }
+
+  // ✅ Nuevo método: Obtiene solo los profesores
+  getProfesores(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/profesores`);
+  }
 }

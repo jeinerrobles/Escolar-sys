@@ -1,90 +1,78 @@
 import { Request, Response } from "express";
 import { AppDataSource } from "../data-source";
 import { Materia } from "../entities/Materia";
+import { Grado } from "../entities/Grado";
 import { User } from "../entities/User";
 
-const materiaRepository = AppDataSource.getRepository(Materia);
-const userRepository = AppDataSource.getRepository(User);
+const materiaRepo = AppDataSource.getRepository(Materia);
+const gradoRepo = AppDataSource.getRepository(Grado);
+const userRepo = AppDataSource.getRepository(User);
 
 export class MateriaController {
   static async getAll(req: Request, res: Response) {
-    const materias = await materiaRepository.find();
-    return res.json(materias);
+    const materias = await materiaRepo.find({ relations: ["grado", "profesor"] });
+    res.json(materias);
   }
 
-  static async getOne(req: Request, res: Response) {
+  static async getById(req: Request, res: Response) {
     const { id } = req.params;
-    const materia = await materiaRepository.findOne({ where: { id: parseInt(id, 10) } });
-
+    const materia = await materiaRepo.findOne({
+      where: { id: parseInt(id) },
+      relations: ["grado", "profesor"]
+    });
     if (!materia) return res.status(404).json({ message: "Materia no encontrada" });
-    return res.json(materia);
+    res.json(materia);
+  }
+
+  static async getByGrado(req: Request, res: Response) {
+    const { id } = req.params;
+    const materias = await materiaRepo.find({
+      where: { grado: { id: parseInt(id) } },
+      relations: ["grado", "profesor"]
+    });
+    res.json(materias);
   }
 
   static async create(req: Request, res: Response) {
-    const { nombre, descripcion, profesorId } = req.body;
+    const { nombre, id_grado, id_profesor } = req.body;
+    const grado = await gradoRepo.findOneBy({ id: id_grado });
+    const profesor = await userRepo.findOneBy({ id: id_profesor });
 
-    const materia = materiaRepository.create({
-      nombre,
-      descripcion,
-      profesorId,
-    });
-
-    await materiaRepository.save(materia);
-    return res.status(201).json({ message: "Materia creada", materia });
+    const materia = materiaRepo.create({ nombre, grado, profesor } as Partial<Materia>);
+    await materiaRepo.save(materia);
+    res.status(201).json(materia);
   }
 
   static async update(req: Request, res: Response) {
     const { id } = req.params;
-    const { nombre, descripcion, profesorId } = req.body;
+    const { nombre, id_profesor, id_grado } = req.body;
 
-    const materia = await materiaRepository.findOne({ where: { id: parseInt(id, 10) } });
+    const materia = await materiaRepo.findOne({
+      where: { id: parseInt(id) },
+      relations: ["grado", "profesor"]
+    });
+
     if (!materia) return res.status(404).json({ message: "Materia no encontrada" });
 
-    materia.nombre = nombre ?? materia.nombre;
-    materia.descripcion = descripcion ?? materia.descripcion;
-    materia.profesorId = profesorId ?? materia.profesorId;
+    if (nombre) materia.nombre = nombre;
+    if (id_profesor) {
+      const profesor = await userRepo.findOneBy({ id: id_profesor });
+      if (!profesor) return res.status(404).json({ message: "Profesor no encontrado" });
+      materia.profesor = profesor;
+    }
+    if (id_grado) {
+      const grado = await gradoRepo.findOneBy({ id: id_grado });
+      if (!grado) return res.status(404).json({ message: "Grado no encontrado" });
+      materia.grado = grado;
+    }
 
-    await materiaRepository.save(materia);
-    return res.json({ message: "Materia actualizada", materia });
+    await materiaRepo.save(materia);
+    res.json(materia);
   }
 
   static async delete(req: Request, res: Response) {
     const { id } = req.params;
-    const materia = await materiaRepository.findOne({ where: { id: parseInt(id, 10) } });
-
-    if (!materia) return res.status(404).json({ message: "Materia no encontrada" });
-
-    await materiaRepository.remove(materia);
-    return res.json({ message: "Materia eliminada" });
-  }
-
-  static async asignarProfesor(req: Request, res: Response) {
-    const { idMateria, idProfesor } = req.body;
-
-    const materia = await materiaRepository.findOne({ where: { id: idMateria }, relations: ["profesor"] });
-    const profesor = await userRepository.findOne({ where: { id: idProfesor, role: "profesor" } });
-
-    if (!materia) return res.status(404).json({ message: "Materia no encontrada" });
-    if (!profesor) return res.status(404).json({ message: "Profesor no válido" });
-
-    materia.profesor = profesor;
-    await materiaRepository.save(materia);
-
-    return res.json({ message: "Profesor asignado", materia });
-  }
-
-  static async inscribirEstudiante(req: Request, res: Response) {
-    const { idMateria, idEstudiante } = req.body;
-
-    const materia = await materiaRepository.findOne({ where: { id: idMateria }, relations: ["estudiantes"] });
-    const estudiante = await userRepository.findOne({ where: { id: idEstudiante, role: "estudiante" } });
-
-    if (!materia) return res.status(404).json({ message: "Materia no encontrada" });
-    if (!estudiante) return res.status(404).json({ message: "Estudiante no válido" });
-
-    materia.estudiantes.push(estudiante);
-    await materiaRepository.save(materia);
-
-    return res.json({ message: "Estudiante inscrito", materia });
+    await materiaRepo.delete(id);
+    res.json({ message: "Materia eliminada correctamente" });
   }
 }

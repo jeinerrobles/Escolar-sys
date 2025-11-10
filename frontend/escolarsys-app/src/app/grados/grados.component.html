@@ -1,0 +1,61 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0">
+      <i class="bi bi-diagram-3"></i> Gestión de Grados
+    </h3>
+    <button class="btn btn-primary" (click)="nuevoGrado()">
+      <i class="bi bi-plus-circle me-1"></i> Nuevo Grado
+    </button>
+  </div>
+
+  <!-- Mostrar cargando -->
+  <div *ngIf="loading" class="text-center my-4">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+  </div>
+
+  <!-- Mostrar tabla -->
+  <div *ngIf="!loading && grados.length > 0; else sinDatos">
+    <table class="table table-striped table-hover">
+    <thead class="table-light">
+        <tr>
+          <th>Grado</th>
+          <th class="text-center">Cursos</th>
+          <th class="text-center">Materias</th>
+          <th class="text-center">Estudiantes</th>
+          <th class="text-center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let grado of grados">
+          <td>{{ grado.nombre }}</td>
+          <td class="text-center">{{ grado.cursos?.length || 0 }}</td>
+          <td class="text-center">{{ grado.materias?.length || 0 }}</td>
+          <td class="text-center">{{ grado.total_estudiantes || 0 }}</td>
+          <td class="text-center">
+            <button class="btn btn-outline-primary btn-sm me-2" (click)="verCursos(grado)">
+              <i class="bi bi-people"></i> Cursos
+            </button>
+            <button class="btn btn-outline-success btn-sm me-2" (click)="verMaterias(grado)">
+              <i class="bi bi-journal-text"></i> Materias
+            </button>
+            <button class="btn btn-outline-warning btn-sm me-2" (click)="editarGrado(grado)">
+              <i class="bi bi-pencil-square"></i> Editar
+            </button>
+            <button class="btn btn-outline-danger btn-sm" (click)="eliminarGrado(grado.id)">
+              <i class="bi bi-trash"></i> Eliminar
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Template vacío -->
+  <ng-template #sinDatos>
+    <div class="alert alert-info text-center mt-4">
+      <i class="bi bi-info-circle"></i> No hay grados registrados.
+    </div>
+  </ng-template>
+</div>

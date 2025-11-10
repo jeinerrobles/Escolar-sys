@@ -1,5 +1,5 @@
 <div class="container mt-4">
-   <div class="d-flex justify-content-between align-items-center mb-3">
+  <div class="d-flex justify-content-between align-items-center mb-3">
     <h3>Gestión de Cursos</h3>
     <a routerLink="/cursos/crear" class="btn btn-primary">
       <i class="fas fa-plus"></i>Crear Curso
@@ -7,11 +7,11 @@
   </div>
 
   <table class="table table-striped table-hover">
-    <thead class="table-dark">
+    <thead class="table-light">
       <tr>
         <th>Nombre</th>
-        <th>Descripción</th>
-        <th>Profesor</th>
+        <th>Grado</th>
+        <th>Director de grupo</th>
         <th>Estudiantes</th>
         <th>Acciones</th>
       </tr>
@@ -19,19 +19,18 @@
     <tbody>
       <tr *ngFor="let curso of cursos">
         <td>{{ curso.nombre }}</td>
-        <td>{{ curso.descripcion }}</td>
+        <td>{{ curso.grado?.nombre || 'No asignado' }}</td>
         <td>{{ curso.profesor?.nombre || 'No asignado' }}</td>
         <td>{{ curso.estudiantes?.length || 0 }}</td>
-        <td>
-          <button [routerLink]="['/cursos/editar', curso.id]" class="btn btn-sm btn-warning me-2">
-            <i class="fas fa-edit"></i> Editar
+        <td class="text-center">
+          <button class="btn btn-outline-warning btn-sm me-2" [routerLink]="['/cursos/editar', curso.id]">
+            <i class="bi bi-pencil-square"></i> Editar
           </button>
-          <button (click)="eliminar(curso.id)" class="btn btn-sm btn-danger">
-            <i class="fas fa-trash-alt"></i> Eliminar
+          <button class="btn btn-outline-danger btn-sm" (click)="eliminar(curso.id)">
+            <i class="bi bi-trash"></i> Eliminar
           </button>
         </td>
       </tr>
     </tbody>
   </table>
 </div>
-

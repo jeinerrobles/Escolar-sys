@@ -1,0 +1,54 @@
+<div class="container mt-4">
+  <div class="card shadow-sm">
+    <div class="card-header bg-primary text-white">
+      <h5 class="mb-0">
+        <i class="bi" [ngClass]="editMode ? 'bi-pencil-square' : 'bi-plus-circle'"></i>
+        {{ editMode ? 'Editar Materia' : 'Nueva Materia' }}
+      </h5>
+    </div>
+
+    <div class="card-body">
+      <form [formGroup]="materiaForm" (ngSubmit)="guardar()">
+        <div class="mb-3">
+          <label for="nombre" class="form-label">Nombre de la materia <span class="text-danger">*</span></label>
+          <input
+            type="text"
+            id="nombre"
+            formControlName="nombre"
+            class="form-control"
+            placeholder="Ej: Matemáticas, Ciencias Naturales..."
+          />
+          <div *ngIf="materiaForm.get('nombre')?.invalid && materiaForm.get('nombre')?.touched" class="text-danger small">
+            El nombre es obligatorio (mínimo 3 caracteres)
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="grado" class="form-label">Grado <span class="text-danger">*</span></label>
+          <select id="grado" formControlName="id_grado" class="form-select">
+            <option [ngValue]="null">Seleccione un grado</option>
+            <option *ngFor="let g of grados" [value]="g.id">{{ g.nombre }}</option>
+          </select>
+          <div *ngIf="materiaForm.get('id_grado')?.invalid && materiaForm.get('id_grado')?.touched" class="text-danger small">
+            Debes seleccionar un grado
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="profesor" class="form-label">Profesor Asignado</label>
+          <select id="profesor" formControlName="id_profesor" class="form-select">
+            <option [ngValue]="null">— Sin profesor —</option>
+            <option *ngFor="let p of profesores" [value]="p.id">{{ p.nombre }}</option>
+          </select>
+        </div>
+
+        <div class="text-end mt-4">
+          <button type="button" class="btn btn-secondary me-2" (click)="cancelar()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">
+            {{ editMode ? 'Actualizar' : 'Guardar' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

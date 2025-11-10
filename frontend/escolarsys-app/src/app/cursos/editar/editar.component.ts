@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CursosService } from '../cursos.service';
 import Swal from 'sweetalert2';
+import { GradoService } from 'src/app/grados/grado.service';
 
 @Component({
   selector: 'app-editar-curso',
@@ -9,13 +10,15 @@ import Swal from 'sweetalert2';
   styleUrls: ['./editar.component.scss']
 })
 export class EditarComponent implements OnInit {
-  curso: any = { nombre: '', descripcion: '', profesorId: null, estudiantesIds: [] };
+  curso: any = { nombre: '', descripcion: '', profesorId: null, estudiantesIds: [], id_grado: null };
   profesores: any[] = [];
   estudiantes: any[] = [];
   selectAll: boolean = false;
+  grados: any[] = [];
 
   constructor(
     private cursosService: CursosService,
+    private gradoService: GradoService,
     private route: ActivatedRoute,
     private router: Router
   ) { }
@@ -30,7 +33,8 @@ export class EditarComponent implements OnInit {
         nombre: data.nombre,
         descripcion: data.descripcion,
         profesorId: data.profesor?.id,
-        estudiantesIds: data.estudiantes?.map((e: any) => e.id) || []
+        estudiantesIds: data.estudiantes?.map((e: any) => e.id) || [],
+        id_grado: data.grado?.id || null
       };
 
       // Cargar estudiantes y marcar seleccionados
@@ -44,6 +48,8 @@ export class EditarComponent implements OnInit {
 
     // Cargar profesores
     this.cursosService.getProfesores().subscribe((data) => (this.profesores = data));
+
+    this.gradoService.getGrados().subscribe((data) => (this.grados = data));
   }
 
   toggleAllEstudiantes() {

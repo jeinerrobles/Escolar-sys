@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { AppDataSource } from "../data-source";
 import { Curso } from "../entities/Curso";
 import { User } from "../entities/User";
+import { Grado } from "../entities/Grado";
 
 const cursoRepository = AppDataSource.getRepository(Curso);
 const userRepository = AppDataSource.getRepository(User);
@@ -9,7 +10,7 @@ const userRepository = AppDataSource.getRepository(User);
 export class CursoController {
   static async getAll(req: Request, res: Response) {
     const cursos = await cursoRepository.find({
-      relations: ["profesor", "estudiantes"]
+      relations: ["profesor", "estudiantes", "grado"],
     });
     res.json(cursos);
   }
@@ -19,7 +20,7 @@ export class CursoController {
       const { id } = req.params;
       const curso = await AppDataSource.getRepository(Curso).findOne({
         where: { id: parseInt(id) },
-        relations: ["profesor", "estudiantes"]
+        relations: ["profesor", "estudiantes", "grado"]
       });
 
       if (!curso) {
@@ -35,11 +36,16 @@ export class CursoController {
 
   static async create(req: Request, res: Response) {
     try {
-      const { nombre, descripcion, profesorId, estudiantesIds } = req.body;
+      const { nombre, descripcion, profesorId, estudiantesIds, id_grado } = req.body;
 
       const profesor = await AppDataSource.getRepository(User).findOneBy({ id: profesorId });
       if (!profesor) {
         return res.status(404).json({ message: "Profesor no encontrado" });
+      }
+
+      const grado = await AppDataSource.getRepository(Grado).findOneBy({ id: id_grado });
+      if (!grado) {
+        return res.status(404).json({ message: "Grado no encontrado" });
       }
 
       const estudiantes = await AppDataSource.getRepository(User).findByIds(estudiantesIds || []);
@@ -48,7 +54,8 @@ export class CursoController {
         nombre,
         descripcion,
         profesor,
-        estudiantes
+        estudiantes,
+        grado
       });
 
       await AppDataSource.getRepository(Curso).save(curso);
@@ -62,14 +69,14 @@ export class CursoController {
   static async update(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const { nombre, descripcion, profesorId, estudiantesIds } = req.body;
+      const { nombre, descripcion, profesorId, estudiantesIds, id_grado } = req.body;
 
       const cursoRepo = AppDataSource.getRepository(Curso);
       const userRepo = AppDataSource.getRepository(User);
 
       const curso = await cursoRepo.findOne({
         where: { id: parseInt(id) },
-        relations: ["profesor", "estudiantes"]
+        relations: ["profesor", "estudiantes", "grado"]
       });
 
       if (!curso) {
@@ -85,6 +92,13 @@ export class CursoController {
           return res.status(404).json({ message: "Profesor no encontrado" });
         }
         curso.profesor = profesor;
+      }
+      if (id_grado) {
+        const grado = await AppDataSource.getRepository(Grado).findOneBy({ id: id_grado });
+        if (!grado) {
+          return res.status(404).json({ message: "Grado no encontrado" });
+        }
+        curso.grado = grado;
       }
 
       if (Array.isArray(estudiantesIds)) {
@@ -116,6 +130,17 @@ export class CursoController {
     curso.profesor = profesor;
     await cursoRepository.save(curso);
     res.json({ message: "Profesor asignado" });
+  }
+
+  static async assignGrado(req: Request, res: Response) {
+    const { id, gradoId } = req.params;
+    const curso = await cursoRepository.findOneBy({ id: Number(id) });
+    const grado = await AppDataSource.getRepository(Grado).findOneBy({ id: Number(gradoId) });
+    if (!curso || !grado) return res.status(404).json({ message: "No encontrado" });
+
+    curso.grado = grado;
+    await cursoRepository.save(curso);
+    res.json({ message: "Grado asignado" });
   }
 
   static async assignEstudiantes(req: Request, res: Response) {

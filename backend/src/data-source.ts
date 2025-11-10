@@ -3,6 +3,7 @@ import { DataSource } from 'typeorm';
 import { User } from './entities/User';
 import { Materia } from './entities/Materia';
 import { Curso } from './entities/Curso'; // ✅ importa Curso
+import { Grado } from './entities/Grado'; // ✅ importa Grado
 
 export const AppDataSource = new DataSource({
   type: 'mysql',
@@ -13,7 +14,7 @@ export const AppDataSource = new DataSource({
   database: process.env.DB_NAME || 'escolar_db',
   synchronize: true, // ⚠️ solo en desarrollo
   logging: false,
-  entities: [User, Materia, Curso], // ✅ registra Curso aquí
+  entities: [User, Materia, Curso, Grado], // ✅ registra Curso aquí
   migrations: [],
   subscribers: [],
 });

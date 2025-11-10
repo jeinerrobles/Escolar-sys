@@ -19,7 +19,16 @@
         </div>
 
         <div class="mb-3">
-          <label class="form-label">Profesor</label>
+          <label class="form-label">Grado</label>
+          <select [(ngModel)]="curso.id_grado" name="id_grado" class="form-select">
+            <option *ngFor="let grado of grados" [value]="grado.id">
+              {{ grado.nombre }}
+            </option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Director de grupo</label>
           <select [(ngModel)]="curso.profesorId" name="profesorId" class="form-select">
             <option *ngFor="let profesor of profesores" [value]="profesor.id">
               {{ profesor.nombre }}

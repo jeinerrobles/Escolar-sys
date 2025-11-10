@@ -6,11 +6,8 @@ const router = Router();
 
 // Solo admin puede crear/editar/eliminar materias
 router.get("/", authenticateJWT, MateriaController.getAll);
-router.get("/:id", authenticateJWT, MateriaController.getById);
-router.get("/grado/:id", authenticateJWT, MateriaController.getByGrado);
 router.post("/", authenticateJWT, authorizeRoles("admin"), MateriaController.create);
 router.put("/:id", authenticateJWT, authorizeRoles("admin"), MateriaController.update);
 router.delete("/:id", authenticateJWT, authorizeRoles("admin"), MateriaController.delete);
-
 
 export default router;

@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, ManyToMany, JoinTable } from "typeorm";
 import { User } from "./User";
+import { Grado } from "./Grado";
 
 @Entity()
 export class Curso {
@@ -20,4 +21,7 @@ export class Curso {
   @ManyToMany(() => User, user => user.cursosTomados)
   @JoinTable()
   estudiantes!: User[];
+
+  @ManyToOne(() => Grado, grado => grado.cursos, { nullable: true })
+  grado?: Grado;
 }
