@@ -3,6 +3,7 @@ import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
 import { GradoService } from './grado.service';
 
+
 @Component({
   selector: 'app-grados-list',
   templateUrl: './grados.component.html',
@@ -12,7 +13,12 @@ export class GradosComponent implements OnInit {
   grados: any[] = [];
   loading = false;
 
-  constructor(private gradoService: GradoService, private router: Router) {}
+  mostrarModal = false;
+  modalTitulo = '';
+  modalLista: any[] = [];
+  busqueda = '';
+
+  constructor(private gradoService: GradoService, private router: Router) { }
 
   ngOnInit(): void {
     this.cargarGrados();
@@ -33,12 +39,55 @@ export class GradosComponent implements OnInit {
     });
   }
 
-  verCursos(grado: any): void {
-    this.router.navigate(['/grados', grado.id, 'cursos']);
+
+  abrirModal(titulo: string, lista: any[]) {
+    this.modalTitulo = titulo;
+    this.modalLista = lista ?? []; // <-- evitar undefined
+    this.busqueda = '';
+    this.mostrarModal = true;
   }
 
-  verMaterias(grado: any): void {
-    this.router.navigate(['/grados', grado.id, 'materias']);
+
+  cerrarModal() {
+    this.mostrarModal = false;
+  }
+
+
+  verCursos(grado: any) {
+    const lista = grado.cursos ?? [];
+    this.abrirModal(`Cursos de ${grado.nombre} (${lista.length})`, lista);
+  }
+
+
+  verMaterias(grado: any) {
+    const lista = grado.materias ?? [];
+    this.abrirModal(`Materias de ${grado.nombre} (${lista.length})`, lista);
+  }
+
+
+  verEstudiantes(grado: any) {
+    const cursos = grado.cursos ?? [];
+
+    const estudiantes = cursos
+      .flatMap((c: any) => c.estudiantes ?? [])
+      .filter((e: any, index: number, self: any[]) =>
+        index === self.findIndex(t => t.id === e.id)
+      );
+
+    this.abrirModal(
+      `Estudiantes de ${grado.nombre} (${estudiantes.length})`,
+      estudiantes
+    );
+  }
+
+
+  filtrarLista() {
+    if (!this.busqueda) return this.modalLista;
+    const texto = this.busqueda.toLowerCase();
+
+    return this.modalLista.filter(item =>
+      item.nombre?.toLowerCase().includes(texto)
+    );
   }
 
   nuevoGrado(): void {

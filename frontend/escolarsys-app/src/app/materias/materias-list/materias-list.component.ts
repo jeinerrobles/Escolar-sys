@@ -63,3 +63,4 @@ export class MateriasListComponent implements OnInit {
     this.router.navigate(['/materias/nuevo']);
   }
 }
+

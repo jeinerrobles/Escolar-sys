@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, JoinTable, ManyToMany } from "typeorm";
 import { Grado } from "./Grado";
 import { User } from "./User";
 
@@ -10,11 +10,15 @@ export class Materia {
   @Column()
   nombre!: string;
 
-  @ManyToOne(() => Grado, grado => grado.materias, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: "id_grado" })
-  grado!: Grado;
+  @ManyToMany(() => Grado, grado => grado.materias)
+  @JoinTable({
+    name: "materia_grado",           // nombre de la tabla intermedia
+    joinColumn: { name: "materia_id" },
+    inverseJoinColumn: { name: "grado_id" }
+  })
+  grados!: Grado[];
 
   @ManyToOne(() => User, user => user.materias, { onDelete: 'SET NULL' })
   @JoinColumn({ name: "id_profesor" })
-  profesor!: User;
+  profesor!: User | null;
 }

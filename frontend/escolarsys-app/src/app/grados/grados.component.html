@@ -8,17 +8,11 @@
     </button>
   </div>
 
-  <!-- Mostrar cargando -->
-  <div *ngIf="loading" class="text-center my-4">
-    <div class="spinner-border text-primary" role="status">
-      <span class="visually-hidden">Cargando...</span>
-    </div>
-  </div>
 
   <!-- Mostrar tabla -->
-  <div *ngIf="!loading && grados.length > 0; else sinDatos">
+  <div *ngIf="grados.length > 0; else sinDatos">
     <table class="table table-striped table-hover">
-    <thead class="table-light">
+      <thead class="table-light">
         <tr>
           <th>Grado</th>
           <th class="text-center">Cursos</th>
@@ -34,17 +28,25 @@
           <td class="text-center">{{ grado.materias?.length || 0 }}</td>
           <td class="text-center">{{ grado.total_estudiantes || 0 }}</td>
           <td class="text-center">
-            <button class="btn btn-outline-primary btn-sm me-2" (click)="verCursos(grado)">
-              <i class="bi bi-people"></i> Cursos
+            <button class="btn btn-outline-primary btn-sm me-2"
+  (click)="verCursos(grado)">
+  <i class="bi bi-people"></i> Cursos
+</button>
+
+            <button class="btn btn-outline-success btn-sm me-2"
+  (click)="verMaterias(grado)">
+  <i class="bi bi-journal-text"></i> Materias
+</button>
+
+            <button class="btn btn-outline-info btn-sm me-2" (click)="verEstudiantes(grado)">
+              <i class="bi bi-person-lines-fill"></i> Estudiantes
             </button>
-            <button class="btn btn-outline-success btn-sm me-2" (click)="verMaterias(grado)">
-              <i class="bi bi-journal-text"></i> Materias
-            </button>
+
             <button class="btn btn-outline-warning btn-sm me-2" (click)="editarGrado(grado)">
-              <i class="bi bi-pencil-square"></i> Editar
+              <i class="bi bi-pencil-square"></i>
             </button>
             <button class="btn btn-outline-danger btn-sm" (click)="eliminarGrado(grado.id)">
-              <i class="bi bi-trash"></i> Eliminar
+              <i class="bi bi-trash"></i>
             </button>
           </td>
         </tr>
@@ -58,4 +60,34 @@
       <i class="bi bi-info-circle"></i> No hay grados registrados.
     </div>
   </ng-template>
+</div>
+
+
+<!-- Modal Custom -->
+<div class="custom-modal-backdrop" *ngIf="mostrarModal"></div>
+
+<div class="custom-modal" *ngIf="mostrarModal">
+  <div class="custom-modal-content">
+
+    <div class="custom-modal-header">
+      <h5 class="m-0">{{ modalTitulo }}</h5>
+      <button class="btn-close" (click)="cerrarModal()"></button>
+    </div>
+
+    <div class="custom-modal-body">
+
+      <input type="text" class="form-control mb-3" placeholder="Buscar..." [(ngModel)]="busqueda">
+
+      <ul class="list-group">
+        <li class="list-group-item" *ngFor="let item of filtrarLista()">
+          {{ item.nombre }}
+        </li>
+      </ul>
+
+      <div *ngIf="modalLista.length === 0" class="text-center text-muted mt-2">
+        No hay elementos para mostrar.
+      </div>
+
+    </div>
+  </div>
 </div>

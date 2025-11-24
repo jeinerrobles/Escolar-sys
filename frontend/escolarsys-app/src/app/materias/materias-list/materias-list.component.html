@@ -1,31 +1,54 @@
 <div class="container mt-4">
+
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h3><i class="bi bi-book"></i> Gestión de Materias</h3>
-    <a class="btn btn-primary" routerLink="/materias/nuevo">
+
+    <button class="btn btn-primary" (click)="crearNueva()">
       <i class="bi bi-plus-circle"></i> Nueva Materia
-    </a>
+    </button>
   </div>
 
-  <table class="table table-striped table-hover">
+  <div *ngIf="cargando" class="text-center my-4">
+    <div class="spinner-border text-primary"></div>
+    <p class="mt-2">Cargando materias...</p>
+  </div>
+
+  <table *ngIf="!cargando" class="table table-striped table-hover">
     <thead class="table-light">
       <tr>
         <th>Materia</th>
-        <th>Grado</th>
         <th>Profesor</th>
+        <th>Grados Asignados</th>
         <th>Acciones</th>
       </tr>
     </thead>
+
     <tbody>
-      <tr *ngFor="let materia of materias">
-        <td>{{ materia.nombre }}</td>
-        <td>{{ materia.grado?.nombre }}</td>
-        <td>{{ materia.profesor?.nombre || '— Sin asignar —' }}</td>
+      <tr *ngFor="let m of materias">
+        <td>{{ m.nombre }}</td>
+
+        <td>
+          <span *ngIf="m.profesor; else noProfesor">
+            {{ m.profesor.nombre }}
+          </span>
+          <ng-template #noProfesor>
+            <span class="text-muted">Sin profesor</span>
+          </ng-template>
+        </td>
+
+        <td>
+          <!-- Badges para múltiples grados -->
+          <span *ngFor="let g of m.grados" class="badge bg-info text-dark me-1">
+            {{ g.nombre }}
+          </span>
+        </td>
+
         <td class="text-center">
-          <button class="btn btn-outline-warning btn-sm me-2" [routerLink]="['/materias/editar', materia.id]">
-            <i class="bi bi-pencil-square"></i> Editar
+          <button class="btn btn-outline-warning btn-sm me-2" [routerLink]="['/materias/editar', m.id]">
+            <i class="bi bi-pencil-square"></i> 
           </button>
-          <button class="btn btn-outline-danger btn-sm" (click)="eliminar(materia.id)">
-            <i class="bi bi-trash"></i> Eliminar
+          <button class="btn btn-outline-danger btn-sm" (click)="eliminar(m.id)">
+            <i class="bi bi-trash"></i> 
           </button>
         </td>
       </tr>

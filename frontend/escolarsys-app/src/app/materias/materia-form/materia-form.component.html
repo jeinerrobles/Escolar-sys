@@ -9,45 +9,69 @@
 
     <div class="card-body">
       <form [formGroup]="materiaForm" (ngSubmit)="guardar()">
+
+        <!-- NOMBRE -->
         <div class="mb-3">
           <label for="nombre" class="form-label">Nombre de la materia <span class="text-danger">*</span></label>
-          <input
-            type="text"
-            id="nombre"
-            formControlName="nombre"
-            class="form-control"
-            placeholder="Ej: Matemáticas, Ciencias Naturales..."
-          />
-          <div *ngIf="materiaForm.get('nombre')?.invalid && materiaForm.get('nombre')?.touched" class="text-danger small">
+
+          <input type="text" id="nombre" formControlName="nombre" class="form-control"
+            placeholder="Ej: Matemáticas, Ciencias Naturales..." />
+
+          <div *ngIf="materiaForm.get('nombre')?.invalid && materiaForm.get('nombre')?.touched"
+            class="text-danger small">
             El nombre es obligatorio (mínimo 3 caracteres)
           </div>
         </div>
 
-        <div class="mb-3">
-          <label for="grado" class="form-label">Grado <span class="text-danger">*</span></label>
-          <select id="grado" formControlName="id_grado" class="form-select">
-            <option [ngValue]="null">Seleccione un grado</option>
-            <option *ngFor="let g of grados" [value]="g.id">{{ g.nombre }}</option>
-          </select>
-          <div *ngIf="materiaForm.get('id_grado')?.invalid && materiaForm.get('id_grado')?.touched" class="text-danger small">
-            Debes seleccionar un grado
-          </div>
-        </div>
-
+        <!-- PROFESOR -->
         <div class="mb-3">
           <label for="profesor" class="form-label">Profesor Asignado</label>
           <select id="profesor" formControlName="id_profesor" class="form-select">
             <option [ngValue]="null">— Sin profesor —</option>
-            <option *ngFor="let p of profesores" [value]="p.id">{{ p.nombre }}</option>
+            <option *ngFor="let p of profesores" [value]="p.id">
+              {{ p.nombre }}
+            </option>
           </select>
         </div>
 
+        <!-- GRADOS (MULTI-SELECT) -->
+        <div class="mb-3">
+          <label for="grados" class="form-label">Grados asociados <span class="text-danger">*</span></label>
+
+          <div class="form-group">
+            <label><strong>Grados:</strong></label>
+
+            <div *ngFor="let grado of grados" class="form-check">
+              <input type="checkbox" class="form-check-input" [value]="grado.id" (change)="onCheckboxChange($event)"
+                [checked]="materiaForm.value.grados.includes(grado.id)" id="grado_{{ grado.id }}" />
+
+              <label class="form-check-label" for="grado_{{ grado.id }}">
+                {{ grado.nombre }}
+              </label>
+            </div>
+          </div>
+
+
+          <!-- Badges de grados seleccionados -->
+          <div class="mt-2" *ngIf="materiaForm.value.grados?.length > 0">
+            <span *ngFor="let idg of materiaForm.value.grados" class="badge bg-primary me-1">
+              <ng-container *ngFor="let g of grados">
+                <ng-container *ngIf="g.id == idg">
+                  {{ g.nombre }}
+                </ng-container>
+              </ng-container>
+            </span>
+          </div>
+        </div>
+
+        <!-- BOTONES -->
         <div class="text-end mt-4">
           <button type="button" class="btn btn-secondary me-2" (click)="cancelar()">Cancelar</button>
           <button type="submit" class="btn btn-primary">
             {{ editMode ? 'Actualizar' : 'Guardar' }}
           </button>
         </div>
+
       </form>
     </div>
   </div>

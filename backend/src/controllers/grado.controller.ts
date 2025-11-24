@@ -11,18 +11,39 @@ const userRepository = AppDataSource.getRepository(User);
 export class GradoController {
   static async getAll(req: Request, res: Response) {
     const grados = await gradoRepository.find({
-      relations: ["cursos", "estudiantes"],
+      relations: [
+        "cursos",
+        "cursos.estudiantes",
+        "materias",
+      ],
     });
-    return res.json(grados);
+
+    const response = grados.map(g => ({
+      ...g,
+      total_estudiantes: g.cursos.reduce(
+        (acc, c) => acc + (c.estudiantes?.length || 0),
+        0
+      ),
+      total_materias: g.materias?.length || 0
+    }));
+
+    return res.json(response);
   }
 
   static async getById(req: Request, res: Response) {
     const { id } = req.params;
+
     const grado = await gradoRepository.findOne({
       where: { id: Number(id) },
-      relations: ["cursos", "estudiantes"],
+      relations: [
+        "cursos",
+        "cursos.estudiantes",
+        "materias"
+      ],
     });
+
     if (!grado) return res.status(404).json({ message: "Grado no encontrado" });
+
     return res.json(grado);
   }
 

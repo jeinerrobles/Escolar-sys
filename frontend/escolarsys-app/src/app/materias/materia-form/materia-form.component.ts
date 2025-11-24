@@ -29,21 +29,22 @@ export class MateriaFormComponent implements OnInit {
   ngOnInit(): void {
     this.materiaForm = this.fb.group({
       nombre: ['', [Validators.required, Validators.minLength(3)]],
-      id_grado: [null, Validators.required],
+      grados: [[], Validators.required],
       id_profesor: [null]
     });
 
-    // Cargar catálogos
+    // Cargar grados
     this.gradoService.getGrados().subscribe({
       next: (res) => (this.grados = res),
       error: (err) => console.error(err)
     });
 
-    this.materiaService.getProfesores().subscribe((data) => {
+    // Cargar profesores
+    this.materiaService.getProfesores().subscribe(data => {
       this.profesores = data;
     });
 
-    // Detectar modo edición
+    // Modo edición
     this.route.params.subscribe(params => {
       const id = params['id'];
       if (id) {
@@ -57,52 +58,69 @@ export class MateriaFormComponent implements OnInit {
   cargarMateria(id: number): void {
     this.materiaService.getMateriaById(id).subscribe({
       next: (materia) => {
-        console.log('Materia cargada:', materia); // 👈 Verifica que los campos lleguen
         this.materiaForm.patchValue({
           nombre: materia.nombre || '',
-          id_grado: materia.grado?.id || null,
+          grados: materia.grados?.map((g: any) => g.id) || [],
           id_profesor: materia.profesor?.id || null
         });
       },
-      error: (err) => {
-        console.error(err);
-        Swal.fire('Error', 'No se pudo cargar la materia', 'error');
-      }
+      error: () => Swal.fire('Error', 'No se pudo cargar la materia', 'error')
     });
   }
 
   guardar(): void {
-    if (this.materiaForm.invalid) {
-      Swal.fire('Atención', 'Debes completar todos los campos requeridos', 'warning');
-      return;
-    }
+  if (this.materiaForm.invalid) {
+    Swal.fire('Atención', 'Debes completar todos los campos requeridos', 'warning');
+    return;
+  }
 
-    const data = this.materiaForm.value;
+  const formValue = this.materiaForm.value;
 
-    if (this.editMode && this.materiaId) {
-      this.materiaService.updateMateria(this.materiaId, data).subscribe({
-        next: () => {
-          Swal.fire('Actualizado', 'La materia fue actualizada correctamente', 'success');
-          this.router.navigate(['/materias']);
-        },
-        error: (err) => {
-          console.error(err);
-          Swal.fire('Error', 'No se pudo actualizar la materia', 'error');
-        }
-      });
-    } else {
-      this.materiaService.createMateria(data).subscribe({
-        next: () => {
-          Swal.fire('Creada', 'La materia fue registrada correctamente', 'success');
-          this.router.navigate(['/materias']);
-        },
-        error: (err) => {
-          console.error(err);
-          Swal.fire('Error', 'No se pudo crear la materia', 'error');
-        }
-      });
+  // Convertir el campo para enviarlo en el formato del backend
+  const data = {
+    nombre: formValue.nombre,
+    id_profesor: formValue.id_profesor || null,
+    id_grados: formValue.grados.map((g: any) => Number(g))  // importantísimo!!!
+  };
+
+  if (this.editMode && this.materiaId) {
+    this.materiaService.updateMateria(this.materiaId, data).subscribe({
+      next: () => {
+        Swal.fire('Actualizado', 'La materia fue actualizada correctamente', 'success');
+        this.router.navigate(['/materias']);
+      },
+      error: () =>
+        Swal.fire('Error', 'No se pudo actualizar la materia', 'error')
+    });
+  } else {
+    this.materiaService.createMateria(data).subscribe({
+      next: () => {
+        Swal.fire('Creada', 'La materia fue registrada correctamente', 'success');
+        this.router.navigate(['/materias']);
+      },
+      error: () =>
+        Swal.fire('Error', 'No se pudo crear la materia', 'error')
+    });
+  }
+}
+
+onCheckboxChange(event: any) {
+  const gradosFormArray = this.materiaForm.get('grados')?.value || [];
+
+  if (event.target.checked) {
+    // Agregar el grado seleccionado
+    gradosFormArray.push(Number(event.target.value));
+  } else {
+    // Eliminar grado desmarcado
+    const index = gradosFormArray.indexOf(Number(event.target.value));
+    if (index > -1) {
+      gradosFormArray.splice(index, 1);
     }
   }
+
+  this.materiaForm.patchValue({ grados: gradosFormArray });
+}
+
 
   cancelar(): void {
     this.router.navigate(['/materias']);

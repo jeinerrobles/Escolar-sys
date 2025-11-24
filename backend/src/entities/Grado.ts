@@ -18,7 +18,7 @@ export class Grado {
   @JoinTable()
   estudiantes!: User[];
 
-  @OneToMany(() => Materia, materia => materia.grado)
+  @ManyToMany(() => Materia, materia => materia.grados)
   materias!: Materia[];
 
 }
