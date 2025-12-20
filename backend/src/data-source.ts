@@ -2,8 +2,9 @@ import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import { User } from './entities/User';
 import { Materia } from './entities/Materia';
-import { Curso } from './entities/Curso'; // ✅ importa Curso
-import { Grado } from './entities/Grado'; // ✅ importa Grado
+import { Curso } from './entities/Curso'; 
+import { Grado } from './entities/Grado'; 
+import { Nota } from './entities/Nota';
 
 export const AppDataSource = new DataSource({
   type: 'mysql',
@@ -12,9 +13,9 @@ export const AppDataSource = new DataSource({
   username: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || 'jeiner070620',
   database: process.env.DB_NAME || 'escolar_db',
-  synchronize: true, // ⚠️ solo en desarrollo
+  synchronize: true,
   logging: false,
-  entities: [User, Materia, Curso, Grado], // ✅ registra Curso aquí
+  entities: [User, Materia, Curso, Grado, Nota],
   migrations: [],
   subscribers: [],
 });

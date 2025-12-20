@@ -20,6 +20,7 @@ const routes: Routes = [
       { path: 'usuarios', loadChildren: () => import('./usuarios/usuarios.module').then(m => m.UsuariosModule) },
       { path: 'grados', loadChildren: () => import('./grados/grados.module').then(m => m.GradosModule) },
       { path: 'materias', loadChildren: () => import('./materias/materias.module').then(m => m.MateriasModule) },
+      { path: 'notas', loadChildren: () => import('./notas/notas.module').then(m => m.NotasModule) },
     ]
   },
 
