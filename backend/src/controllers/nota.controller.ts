@@ -86,4 +86,84 @@ export class NotaController {
 
     res.json({ message: 'Notas guardadas correctamente' });
   }
+
+  static async getBoletin(req: Request, res: Response) {
+  const { estudianteId, cursoId } = req.params;
+  
+
+  const estudiante = await userRepo.findOne({
+    where: { id: Number(estudianteId) },
+  });
+
+  if (!estudiante) {
+    return res.status(404).json({ message: 'Estudiante no encontrado' });
+  }
+
+  const notas = await notaRepo.find({
+    where: {
+      estudiante: { id: Number(estudianteId) },
+      curso: { id: Number(cursoId) }
+    },
+    relations: ['materia']
+  });
+
+  if (notas.length === 0) {
+    return res.json({
+      estudiante: estudiante.nombre,
+      materias: [],
+      promedioGeneral: 0
+    });
+  }
+
+  const materiasMap: any = {};
+
+  for (const nota of notas) {
+    const materiaId = nota.materia.id;
+
+    if (!materiasMap[materiaId]) {
+      materiasMap[materiaId] = {
+        materia: nota.materia.nombre,
+        periodos: {},
+        promedio: 0
+      };
+    }
+
+    materiasMap[materiaId].periodos[nota.periodo] = nota.valor;
+  }
+
+  const materias = Object.values(materiasMap).map((m: any) => {
+
+  const valores = Object.values(m.periodos)
+    .map(v => Number(v))
+    .filter(v => !isNaN(v));
+
+  const promedio =
+    valores.length > 0
+      ? Number(
+          (valores.reduce((a, b) => a + b, 0) / valores.length).toFixed(2)
+        )
+      : null;
+
+  return { ...m, promedio };
+});
+
+const promedioGeneral =
+  materias.length > 0
+    ? Number(
+        (
+          materias.reduce((a, b) => a + (b.promedio ?? 0), 0) /
+          materias.length
+        ).toFixed(2)
+      )
+    : null;
+
+  res.json({
+    estudiante: estudiante.nombre,
+    cursoId,
+    materias,
+    promedioGeneral
+  });
+}
+
+
 }
