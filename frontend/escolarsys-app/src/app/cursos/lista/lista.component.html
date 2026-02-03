@@ -1,0 +1,46 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3><i class="bi bi-book"></i> Gestión de Cursos</h3>
+
+    <a routerLink="crear" class="btn btn-primary">
+      <i class="bi bi-plus-circle"></i> Crear Curso
+    </a>
+  </div>
+
+  <table class="table table-striped table-hover">
+    <thead class="table-light">
+      <tr>
+        <th>Nombre</th>
+        <th>Grado</th>
+        <th>Director de grupo</th>
+        <th>Estudiantes</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let curso of cursos">
+        <td>{{ curso.nombre }}</td>
+        <td>{{ curso.grado?.nombre || 'No asignado' }}</td>
+        <td>{{ curso.profesor?.nombre || 'No asignado' }}</td>
+        <td>{{ curso.estudiantes?.length || 0 }}</td>
+        <td class="text-center">
+          <button
+            type="button"
+            class="btn btn-outline-warning btn-sm me-2"
+            [routerLink]="['editar', curso.id]"
+          >
+            <i class="bi bi-pencil-square"></i>
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-outline-danger btn-sm"
+            (click)="eliminar(curso.id)"
+          >
+            <i class="bi bi-trash"></i>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
