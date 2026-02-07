@@ -10,6 +10,8 @@ import { loginGuard } from './login.guard';
 import { roleGuard } from './role.guard';
 import { Role } from './core/models/role';
 
+import { PanelHomeComponent } from './layouts/panel-home/panel-home.component';
+
 const routes: Routes = [
   // =====================
   // HOME PÚBLICO
@@ -42,12 +44,19 @@ const routes: Routes = [
     component: MainLayoutComponent,
     canActivate: [authGuard],
     children: [
-      { path: '', redirectTo: 'cursos', pathMatch: 'full' },
+        {
+        path: '',
+        component: PanelHomeComponent,
+        //canActivate: [panelRedirectGuard]
+      },
+
 
       {
         path: 'cursos',
         loadChildren: () =>
-          import('./cursos/cursos.module').then(m => m.CursosModule)
+        import('./cursos/cursos.module').then(m => m.CursosModule),
+        canActivate: [roleGuard],
+        data: { roles: [Role.ADMIN,Role.DOCENTE] }
       },
 
       {
@@ -61,13 +70,17 @@ const routes: Routes = [
       {
         path: 'materias',
         loadChildren: () =>
-          import('./materias/materias.module').then(m => m.MateriasModule)
+          import('./materias/materias.module').then(m => m.MateriasModule),
+        canActivate: [roleGuard],
+        data: { roles: [Role.ADMIN,Role.DOCENTE] }
       },
 
       {
         path: 'grados',
         loadChildren: () =>
-          import('./grados/grados.module').then(m => m.GradosModule)
+          import('./grados/grados.module').then(m => m.GradosModule),
+        canActivate: [roleGuard],
+        data: { roles: [Role.ADMIN] }
       },
 
       {

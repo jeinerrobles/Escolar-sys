@@ -9,12 +9,6 @@ export interface MenuItem {
 
 export const MENU_ITEMS: MenuItem[] = [
   {
-    label: 'Inicio',
-    icon: 'bi bi-house',
-    route: '/panel/home',
-    roles: [Role.ADMIN, Role.DOCENTE, Role.ESTUDIANTE]
-  },
-  {
     label: 'Usuarios',
     icon: 'bi bi-people',
     route: '/panel/usuarios',

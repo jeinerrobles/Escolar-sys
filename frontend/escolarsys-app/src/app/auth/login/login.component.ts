@@ -8,14 +8,18 @@ import { AuthService } from '../auth.service';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent {
+
   email: string = '';
   password: string = '';
   error: string = '';
-  success = '';
+  success: string = '';
   isLoading = false;
   showPassword = false;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
   togglePassword() {
     this.showPassword = !this.showPassword;
@@ -23,19 +27,45 @@ export class LoginComponent {
 
   login() {
     this.isLoading = true;
-    this.authService.login({ email: this.email, password: this.password }).subscribe({
+    this.error = '';
+    this.success = '';
+
+    this.authService.login({
+      email: this.email,
+      password: this.password
+    }).subscribe({
       next: (res: any) => {
+
+        //  Guardar sesión ANTES de navegar
         localStorage.setItem('token', res.token);
+        localStorage.setItem('user', JSON.stringify(res.user));
+
         this.success = 'Bienvenido a EscolarSys';
-        this.error = '';
-        setTimeout(() => this.router.navigate(['/panel/cursos']), 1500);
+
+        const role = res.user.role;
+
+        //  Redirección por rol
+        switch (role) {
+          case 'ADMIN':
+            this.router.navigate(['/panel/cursos']);
+            break;
+
+          case 'DOCENTE':
+          case 'ESTUDIANTE':
+            this.router.navigate(['/panel/notas']);
+            break;
+
+          default:
+            this.router.navigate(['/panel']);
+        }
       },
       error: err => {
-        this.error = err.error.message || 'Error al iniciar sesión';
-        this.success = '';
+        this.error = err.error?.message || 'Error al iniciar sesión';
         this.isLoading = false;
       },
-      complete: () => (this.isLoading = false)
+      complete: () => {
+        this.isLoading = false;
+      }
     });
   }
 }

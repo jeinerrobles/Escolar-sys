@@ -9,38 +9,23 @@
     </div>
 
     <ul class="nav flex-column">
-      <li class="nav-item">
-        <a routerLink="/panel/cursos" routerLinkActive="active" class="nav-link">
-          <i class="bi bi-book"></i>
-          <span *ngIf="!isSidebarCollapsed">Gestión de cursos</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a routerLink="/panel/usuarios" routerLinkActive="active" class="nav-link">
-          <i class="bi bi-person-plus"></i>
-          <span *ngIf="!isSidebarCollapsed">Gestión de usuarios</span> 
-        </a>
-      </li>
-      <li class="nav-item">
-        <a routerLink="/panel/materias" routerLinkActive="active" class="nav-link">
-          <i class="bi bi-pencil-square"></i>
-          <span *ngIf="!isSidebarCollapsed">Gestión de materias</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a routerLink="/panel/grados" routerLinkActive="active" class="nav-link">
-          <i class="bi bi-diagram-3"></i>
-          <span *ngIf="!isSidebarCollapsed">Gestión de grados</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a routerLink="/panel/notas" routerLinkActive="active" class="nav-link">
-          <i class="bi bi-clipboard-check"></i>
-          <span *ngIf="!isSidebarCollapsed">Gestión de notas</span>
-        </a>
-      </li>
-      
-    </ul>
+  <li
+    class="nav-item"
+    *ngFor="let item of menuItems"
+  >
+    <a
+      [routerLink]="item.route"
+      routerLinkActive="active"
+      class="nav-link"
+    >
+      <i [class]="item.icon"></i>
+      <span *ngIf="!isSidebarCollapsed">
+        {{ item.label }}
+      </span>
+    </a>
+  </li>
+</ul>
+
   </nav>
 
   <!-- Main content -->

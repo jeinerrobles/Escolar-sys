@@ -16,7 +16,7 @@ export const roleGuard: CanActivateFn = (route) => {
     return false;
   }
 
-  // Ruta sin roles → permitir
+  // Ruta sin roles -> permitir
   if (!allowedRoles || allowedRoles.length === 0) {
     return true;
   }

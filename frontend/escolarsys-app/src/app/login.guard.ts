@@ -6,12 +6,11 @@ export const loginGuard: CanActivateFn = () => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  // 🔒 Si YA está logueado → no puede ver login
+  // Si ya está logueado  mándalo al panel 
   if (authService.isLoggedIn()) {
-    router.navigate(['/panel/cursos']);
+    router.navigate(['/panel']);
     return false;
   }
 
-  // ✅ Si NO está logueado → puede entrar a login
   return true;
 };
