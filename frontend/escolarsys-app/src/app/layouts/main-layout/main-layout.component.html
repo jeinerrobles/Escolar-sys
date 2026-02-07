@@ -8,23 +8,23 @@
       </button>
     </div>
 
-    <ul class="nav flex-column">
-  <li
-    class="nav-item"
-    *ngFor="let item of menuItems"
-  >
-    <a
-      [routerLink]="item.route"
-      routerLinkActive="active"
-      class="nav-link"
-    >
-      <i [class]="item.icon"></i>
-      <span *ngIf="!isSidebarCollapsed">
-        {{ item.label }}
-      </span>
-    </a>
-  </li>
-</ul>
+  <ul class="nav flex-column">
+      <li
+        class="nav-item"
+        *ngFor="let item of menuItems"
+      >
+        <a
+          [routerLink]="item.route"
+          routerLinkActive="active"
+          class="nav-link"
+        >
+          <i [class]="item.icon"></i>
+          <span *ngIf="!isSidebarCollapsed">
+            {{ item.label }}
+          </span>
+        </a>
+      </li>
+  </ul>
 
   </nav>
 
