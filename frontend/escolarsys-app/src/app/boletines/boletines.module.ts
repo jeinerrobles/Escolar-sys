@@ -2,18 +2,18 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { NotasRoutingModule } from './notas-routing.module';
-import { NotasGestionComponent } from './notas-gestion/notas-gestion.component';
+import { BoletinComponent } from './boletin.component';
+import { BoletinesRoutingModule } from './boletines-routing.module';
 
 @NgModule({
   declarations: [
-    NotasGestionComponent,
+    BoletinComponent,
   ],
   imports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    NotasRoutingModule
+    BoletinesRoutingModule
   ]
 })
-export class NotasModule {}
+export class BoletinesModule {}

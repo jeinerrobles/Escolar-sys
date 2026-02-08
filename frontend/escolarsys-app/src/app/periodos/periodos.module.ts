@@ -2,18 +2,18 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { NotasRoutingModule } from './notas-routing.module';
-import { NotasGestionComponent } from './notas-gestion/notas-gestion.component';
+import { PeriodoComponent } from './periodo.component';
+import { PeriodosRoutingModule } from './periodos-routing.module';
 
 @NgModule({
   declarations: [
-    NotasGestionComponent,
+    PeriodoComponent,
   ],
   imports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    NotasRoutingModule
+    PeriodosRoutingModule
   ]
 })
-export class NotasModule {}
+export class PeriodosModule {}

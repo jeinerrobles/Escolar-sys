@@ -10,7 +10,7 @@
 
       <div class="col-md-3">
         <label>Grado</label>
-        <select class="form-select" [(ngModel)]="filtro.grado" (change)="onGradoChange()">
+        <select class="form-select" [(ngModel)]="filtro.grado" (change)="onGradoChange(); onFiltroChange()">
           <option value="">Seleccione</option>
           <option *ngFor="let g of grados" [ngValue]="g">
             {{ g.nombre }}
@@ -20,7 +20,7 @@
 
       <div class="col-md-3">
         <label>Curso</label>
-        <select class="form-select" [(ngModel)]="filtro.curso">
+        <select class="form-select" [(ngModel)]="filtro.curso" (change)="onFiltroChange()" [disabled]="!cursos.length">
           <option value="">Seleccione</option>
           <option *ngFor="let c of cursos" [ngValue]="c">
             {{ c.nombre }}
@@ -30,7 +30,7 @@
 
       <div class="col-md-3">
         <label>Materia</label>
-        <select class="form-select" [(ngModel)]="filtro.materia">
+        <select class="form-select" [(ngModel)]="filtro.materia" (change)="onFiltroChange()" [disabled]="!materias.length">
           <option value="">Seleccione</option>
           <option *ngFor="let m of materias" [ngValue]="m">
             {{ m.nombre }}
@@ -40,18 +40,21 @@
 
       <div class="col-md-3">
         <label>Periodo</label>
-        <select class="form-select" [(ngModel)]="filtro.periodo">
-          <option [value]="1">Periodo 1</option>
-          <option [value]="2">Periodo 2</option>
-          <option [value]="3">Periodo 3</option>
-          <option [value]="4">Periodo 4</option>
+        <select class="form-select" [(ngModel)]="filtro.periodo" (change)="onPeriodoChange(); onFiltroChange()" [disabled]="!filtro.curso || !filtro.materia">
+
+        <option value="">Seleccione</option>
+
+          <option *ngFor="let p of periodos" [value]="p.periodo">
+            Periodo {{ p.periodo }}
+            <span *ngIf="!p.habilitado"> (Cerrado)</span>
+          </option>
         </select>
       </div>
 
     </div>
 
-    <button class="btn btn-primary mt-3" (click)="cargarNotas()">
-      <i class="bi bi-search"></i> Cargar estudiantes
+    <button class="btn btn-primary mt-3" (click)="cargarNotas()" [disabled]="!filtro.grado || !filtro.curso || !filtro.materia || !filtro.periodo">
+    <i class="bi bi-search"></i> Cargar estudiantes
     </button>
   </div>
 
@@ -65,7 +68,7 @@
 
     <div class="card p-3">
       <h5 class="mb-3">
-        {{ filtro.materia.nombre }} — {{ filtro.curso.nombre }} — Periodo {{ filtro.periodo }}
+        Periodo {{ filtro.periodo }} - {{ filtro.materia.nombre }} - {{ filtro.curso.nombre }}
       </h5>
 
       <table class="table table-bordered">
@@ -82,26 +85,14 @@
             <td>{{ i + 1 }}</td>
             <td>{{ e.nombre }}</td>
             <td class="text-center">
-              <input
-                type="number"
-                class="form-control text-center"
-                [(ngModel)]="e.nota"
-                [disabled]="!puedeEditar()"
-                min="0"
-                max="5"
-                step="0.1"
-                (blur)="validarNota(e)"
-              />
+              <input type="number" class="form-control text-center" [(ngModel)]="e.nota" [disabled]="!puedeEditar()"
+                     min="0" max="5" step="0.1" (blur)="validarNota(e)" />
             </td>
           </tr>
         </tbody>
       </table>
 
-      <button
-        class="btn btn-success"
-        (click)="guardarNotas()"
-        *ngIf="puedeEditar()"
-      >
+      <button class="btn btn-success" (click)="guardarNotas()" *ngIf="puedeEditar()">
         <i class="bi bi-save"></i> Guardar notas
       </button>
     </div>

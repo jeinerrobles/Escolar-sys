@@ -10,6 +10,8 @@ import usuarioRoutes from './routes/usuario.routes';
 import gradoRoutes from './routes/grado.routes';
 import notasRoutes from './routes/nota.routes';
 import { seedGrados } from './seeds/grados.seed';
+import boletinRoutes from "./routes/boletin.routes";
+import periodosRoutes from "./routes/periodos.routes";
 
 dotenv.config();
 
@@ -25,6 +27,8 @@ app.use("/api/cursos", cursoRoutes);
 app.use("/api/usuarios", usuarioRoutes);
 app.use('/api/grados', gradoRoutes);
 app.use('/api/notas', notasRoutes);
+app.use('/api/boletines', boletinRoutes);
+app.use('/api/periodos', periodosRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', env: process.env.NODE_ENV || 'development' });

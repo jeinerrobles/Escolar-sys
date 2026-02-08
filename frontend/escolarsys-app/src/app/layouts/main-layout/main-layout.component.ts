@@ -16,6 +16,7 @@ export class MainLayoutComponent implements OnInit {
 
   menuItems: MenuItem[] = [];
   role!: Role;
+  openMenus: { [key: string]: boolean } = {};
 
   constructor(
     private authService: AuthService,
@@ -27,9 +28,14 @@ export class MainLayoutComponent implements OnInit {
     this.role = this.user?.role;
 
     // 👉 Filtrar menú según rol
-    this.menuItems = MENU_ITEMS.filter(item =>
-      item.roles.includes(this.role)
-    );
+    this.menuItems = MENU_ITEMS
+      .filter(item => item.roles.includes(this.role))
+      .map(item => ({
+        ...item,
+        children: item.children?.filter(child =>
+          child.roles.includes(this.role)
+        )
+      }));
   }
 
   toggleSidebar() {
@@ -39,5 +45,9 @@ export class MainLayoutComponent implements OnInit {
   logout() {
     this.authService.logout(); //  mejor centralizar aquí
     this.router.navigate(['/login']);
+  }
+
+  toggleSubmenu(label: string) {
+    this.openMenus[label] = !this.openMenus[label];
   }
 }

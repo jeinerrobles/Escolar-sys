@@ -89,6 +89,22 @@ const routes: Routes = [
           import('./notas/notas.module').then(m => m.NotasModule),
         canActivate: [roleGuard],
         data: { roles: [Role.ADMIN, Role.DOCENTE, Role.ESTUDIANTE] }
+      },
+
+      {
+        path: 'boletines',
+        loadChildren: () =>
+          import('./boletines/boletines.module').then(m => m.BoletinesModule),
+        canActivate: [roleGuard],
+        data: { roles: [Role.ADMIN, Role.DOCENTE, Role.ESTUDIANTE] }
+      },
+
+      {
+        path: 'periodos',
+        loadChildren: () =>
+          import('./periodos/periodos.module').then(m => m.PeriodosModule),
+        canActivate: [roleGuard],
+        data: { roles: [Role.ADMIN] }
       }
 
     ]

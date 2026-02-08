@@ -5,6 +5,7 @@ import { Materia } from './entities/Materia';
 import { Curso } from './entities/Curso'; 
 import { Grado } from './entities/Grado'; 
 import { Nota } from './entities/Nota';
+import { PeriodoConfig } from './entities/PeriodoConfig';
 
 export const AppDataSource = new DataSource({
   type: 'mysql',
@@ -15,7 +16,7 @@ export const AppDataSource = new DataSource({
   database: process.env.DB_NAME || 'escolar_db',
   synchronize: true,
   logging: false,
-  entities: [User, Materia, Curso, Grado, Nota],
+  entities: [User, Materia, Curso, Grado, Nota, PeriodoConfig],
   migrations: [],
   subscribers: [],
 });

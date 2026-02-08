@@ -3,8 +3,9 @@ import { Role } from './models/role';
 export interface MenuItem {
   label: string;
   icon: string;
-  route: string;
+  route?: string;
   roles: Role[];
+  children?: MenuItem[]; // 👈 soporte para submenús
 }
 
 export const MENU_ITEMS: MenuItem[] = [
@@ -36,6 +37,18 @@ export const MENU_ITEMS: MenuItem[] = [
     label: 'Notas',
     icon: 'bi bi-clipboard-check',
     route: '/panel/notas',
+    roles: [Role.ADMIN, Role.DOCENTE]
+  },
+  {
+    label: 'Boletín',
+    icon: 'bi bi-card-checklist',
+    route: '/panel/boletines',
     roles: [Role.ADMIN, Role.DOCENTE, Role.ESTUDIANTE]
-  }
+  },
+  {
+    label: 'Períodos Académicos',
+    icon: 'bi bi-calendar-range',
+    route: '/panel/periodos',
+    roles: [Role.ADMIN]
+  },
 ];

@@ -23,4 +23,5 @@ export class NotasService {
   guardarNotas(data: any) {
     return this.http.post(`${this.api}/notas/guardar`, data);
   }
+
 }

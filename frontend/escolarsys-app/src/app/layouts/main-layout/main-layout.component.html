@@ -8,23 +8,69 @@
       </button>
     </div>
 
-  <ul class="nav flex-column">
-      <li
-        class="nav-item"
-        *ngFor="let item of menuItems"
-      >
+    <ul class="nav flex-column">
+      <li class="nav-item" *ngFor="let item of menuItems">
+
+        <!-- ITEM NORMAL (SIN HIJOS) -->
         <a
+          *ngIf="!item.children"
+          class="nav-link"
           [routerLink]="item.route"
           routerLinkActive="active"
-          class="nav-link"
         >
           <i [class]="item.icon"></i>
-          <span *ngIf="!isSidebarCollapsed">
+          <span *ngIf="!isSidebarCollapsed">{{ item.label }}</span>
+        </a>
+
+        <!-- ITEM CON SUBMENÚ -->
+        <div *ngIf="item.children">
+
+          <div class="nav-link d-flex align-items-center">
+
+            <!-- CLICK AQUÍ NAVEGA -->
+            <span
+              class="d-flex align-items-center flex-grow-1"
+              [routerLink]="item.route"
+              routerLinkActive="active"
+            >
+          <i [class]="item.icon"></i>
+          <span *ngIf="!isSidebarCollapsed" class="ms-2">
             {{ item.label }}
           </span>
-        </a>
+        </span>
+
+            <!-- SOLO DESPLIEGA / CIERRA -->
+            <i
+              *ngIf="!isSidebarCollapsed"
+              class="bi ms-auto"
+              [ngClass]="openMenus[item.label] ? 'bi-chevron-up' : 'bi-chevron-down'"
+              (click)="toggleSubmenu(item.label); $event.stopPropagation()"
+            ></i>
+
+          </div>
+
+          <!-- SUBMENÚ -->
+          <ul
+            *ngIf="openMenus[item.label] && !isSidebarCollapsed"
+            class="nav flex-column ms-4"
+          >
+            <li class="nav-item" *ngFor="let child of item.children">
+              <a
+                class="nav-link"
+                [routerLink]="child.route"
+                routerLinkActive="active"
+              >
+                <i [class]="child.icon"></i>
+                {{ child.label }}
+              </a>
+            </li>
+          </ul>
+
+        </div>
+
       </li>
-  </ul>
+    </ul>
+
 
   </nav>
 
