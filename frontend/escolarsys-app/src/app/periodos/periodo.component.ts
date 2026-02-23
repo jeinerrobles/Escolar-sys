@@ -25,7 +25,7 @@ export class PeriodoComponent {
   cargarPeriodos(): void {
     this.periodosService.getPeriodos().subscribe({
       next: (res: any) => {
-        // 👇 AQUÍ ESTÁ LA CLAVE
+        // AQUÍ ESTÁ LA CLAVE
         this.periodos = res.periodos.map((p: any) => ({
           id: Number(p.id),
           periodo: p.periodo,

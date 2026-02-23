@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MateriaService } from '../materia.service';
 import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
+import { AuthService } from 'src/app/auth/auth.service'; // 👈 IMPORTANTE
 
 @Component({
   selector: 'app-materias-list',
@@ -11,14 +12,24 @@ import { Router } from '@angular/router';
 export class MateriasListComponent implements OnInit {
   materias: any[] = [];
   cargando = false;
+  role: string | null = null; // 👈 guardamos el rol
 
   constructor(
     private materiaService: MateriaService,
-    private router: Router
+    private router: Router,
+    private authService: AuthService // 👈 inyectamos
   ) {}
 
   ngOnInit(): void {
+    this.role = this.authService.getUserRole(); // 👈 obtenemos rol
     this.obtenerMaterias();
+  }
+
+  // 👇 getter limpio para usar en el HTML
+  get esAdmin(): boolean {
+    return this.role === 'admin'; 
+    // ⚠️ si tu backend devuelve 'ADMIN' cambia por:
+    // return this.role === 'ADMIN';
   }
 
   obtenerMaterias(): void {
@@ -63,4 +74,3 @@ export class MateriasListComponent implements OnInit {
     this.router.navigate(['panel/materias/nuevo']);
   }
 }
-

@@ -72,7 +72,7 @@ export class EditarComponent implements OnInit {
         showConfirmButton: false,
         timer: 2000
       }).then(() => {
-        this.router.navigate(['/cursos']);
+        this.router.navigate(['panel/cursos']);
       });
     });
   }

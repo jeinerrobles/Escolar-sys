@@ -9,11 +9,54 @@ const userRepository = AppDataSource.getRepository(User);
 
 export class CursoController {
   static async getAll(req: Request, res: Response) {
-    const cursos = await cursoRepository.find({
-      relations: ["profesor", "estudiantes", "grado"],
-    });
-    res.json(cursos);
+  try {
+    const user = req.user;
+
+    if (!user) {
+      return res.status(401).json({ message: "No autorizado" });
+    }
+
+    let cursos;
+
+    // 🔥 ADMIN → ve todos
+    if (user.role === "admin") {
+      cursos = await cursoRepository.find({
+        relations: ["profesor", "estudiantes", "grado"],
+      });
+    }
+
+    // 🔥 PROFESOR → solo sus cursos
+    else if (user.role === "profesor") {
+      cursos = await cursoRepository.find({
+        where: {
+          profesor: { id: user.id }
+        },
+        relations: ["profesor", "estudiantes", "grado"],
+      });
+    }
+
+    // 🔥 ESTUDIANTE → solo cursos donde está inscrito
+    else if (user.role === "estudiante") {
+      cursos = await cursoRepository.find({
+        where: {
+          estudiantes: { id: user.id }
+        },
+        relations: ["profesor", "estudiantes", "grado"],
+      });
+    }
+
+    else {
+      return res.status(403).json({ message: "Rol no válido" });
+    }
+
+    return res.json(cursos);
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Error al obtener cursos" });
   }
+}
+
 
   static async getOne(req: Request, res: Response) {
     try {
