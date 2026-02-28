@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CursosService } from '../cursos.service';
+import Swal from "sweetalert2";
 
 declare var bootstrap: any;
 
@@ -12,7 +13,7 @@ export class ListaComponent implements OnInit {
 
   cursos: any[] = [];
   role: string = '';
-  cursoExpandido: number | null = null;  
+  cursoExpandido: number | null = null;
 
   //  Modal
   cursoSeleccionado: any = null;
@@ -45,16 +46,36 @@ export class ListaComponent implements OnInit {
           );
         }
       },
-      error: (err) => console.error('Error cargando cursos', err)
+      error: (err) => {
+        console.error(err);
+        Swal.fire('Error', 'No se pudieron cargar los cursos. Por favor cierre sesión y vuelva a ingresar.', 'error');
+      }
     });
   }
 
   //  Eliminar curso (solo admin)
   eliminar(id: number) {
-    if (confirm('¿Seguro de eliminar este curso?')) {
-      this.cursosService.deleteCurso(id)
-        .subscribe(() => this.cargarCursos());
-    }
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: 'Este curso se eliminará permanentemente.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.cursosService.deleteCurso(id).subscribe({
+          next: () => {
+            Swal.fire('Eliminado', 'El curso fue eliminado correctamente', 'success');
+            this.cargarCursos();
+          },
+          error: (err) => {
+            console.error(err);
+            Swal.fire('Error', 'No se pudo eliminar el grado', 'error');
+          }
+        });
+      }
+    });
   }
 
   //  Abrir modal de estudiantes

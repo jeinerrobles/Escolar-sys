@@ -34,7 +34,7 @@ export class GradosComponent implements OnInit {
       error: (err) => {
         console.error(err);
         this.loading = false;
-        Swal.fire('Error', 'No se pudieron cargar los grados', 'error');
+        Swal.fire('Error', 'No se pudieron cargar los grados. Por favor cierre sesión y vuelva a ingresar.', 'error');
       }
     });
   }

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BoletinesService } from './boletines.service';
+import Swal from "sweetalert2";
 
 @Component({
   selector: 'app-boletin',
@@ -64,7 +65,8 @@ export class BoletinComponent implements OnInit {
           }
         },
         error: (err) => {
-          console.error('Error al cargar grados:', err);
+          console.error(err);
+          Swal.fire('Error', 'No se pudieron cargar los grados para consultar', 'error');
         }
       });
     } else {
@@ -74,7 +76,8 @@ export class BoletinComponent implements OnInit {
           this.grados = res;
         },
         error: (err) => {
-          console.error('Error al cargar grados para boletines:', err);
+          console.error(err);
+          Swal.fire('Error', 'No se pudieron cargar los datos. Por favor cierre sesión y vuelva a ingresar.', 'error');
         }
       });
     }

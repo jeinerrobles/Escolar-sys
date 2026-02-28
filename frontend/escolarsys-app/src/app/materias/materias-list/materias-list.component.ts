@@ -27,7 +27,7 @@ export class MateriasListComponent implements OnInit {
 
   // 👇 getter limpio para usar en el HTML
   get esAdmin(): boolean {
-    return this.role === 'admin'; 
+    return this.role === 'admin';
     // ⚠️ si tu backend devuelve 'ADMIN' cambia por:
     // return this.role === 'ADMIN';
   }
@@ -42,14 +42,15 @@ export class MateriasListComponent implements OnInit {
       error: (err) => {
         console.error(err);
         this.cargando = false;
+        Swal.fire('Error', 'No se pudieron cargar las materias. Por favor cierre sesión y vuelva a ingresar.', 'error');
       }
     });
   }
 
   eliminar(id: number): void {
     Swal.fire({
-      title: '¿Eliminar materia?',
-      text: 'Esta acción no se puede deshacer.',
+      title: '¿Estás seguro?',
+      text: 'Esta materia se eliminará permanentemente.',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Sí, eliminar',

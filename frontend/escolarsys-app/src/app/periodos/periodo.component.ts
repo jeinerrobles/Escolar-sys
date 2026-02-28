@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { PeriodosService } from './periodos.service';
+import Swal from "sweetalert2";
 
 interface Periodo {
   id: number;
@@ -32,8 +33,9 @@ export class PeriodoComponent {
           habilitado: !!p.habilitado
         }));
       },
-      error: () => {
-        alert('Error al cargar periodos');
+      error: (err) => {
+        console.error(err);
+        Swal.fire('Error', 'No se pudieron cargar los periodos académicos. Por favor cierre sesión y vuelva a ingresar.', 'error');
       }
     });
   }
@@ -63,11 +65,12 @@ export class PeriodoComponent {
     this.periodosService.actualizarPeriodos(this.periodos).subscribe({
       next: () => {
         this.loading = false;
+        Swal.fire('Actualizado', 'El periodo académico fue actualizado correctamente', 'success');
       },
       error: (err) => {
         this.loading = false;
         console.error(err);
-        alert('Error al guardar configuración');
+        Swal.fire('Error', 'No fue posible actualizar el periodo académico', 'error');
       }
     });
   }

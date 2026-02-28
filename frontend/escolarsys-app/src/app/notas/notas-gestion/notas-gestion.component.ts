@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { NotasService } from '../notas.service';
 import {PeriodosService} from "../../periodos/periodos.service";
+import Swal from "sweetalert2";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-notas-gestion',
@@ -32,7 +34,7 @@ export class NotasGestionComponent {
   mostrarTabla = false;
   periodoActualEditable = false;
 
-  constructor(private notasService: NotasService, private periodosService: PeriodosService) {}
+  constructor(private notasService: NotasService, private periodosService: PeriodosService, private router: Router) {}
 
   ngOnInit(): void {
     this.user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -42,8 +44,14 @@ export class NotasGestionComponent {
 
   // 🔹 Cargar grados
   cargarGrados() {
-    this.notasService.getGrados().subscribe(res => {
-      this.grados = res;
+    this.notasService.getGrados().subscribe({
+      next: (res) => {
+        this.grados = res;
+      },
+        error: (err) => {
+        console.error(err);
+        Swal.fire('Error', 'No se pudieron cargar los datos. Por favor cierre sesión y vuelva a ingresar.', 'error');
+      }
     });
   }
 
@@ -124,8 +132,14 @@ export class NotasGestionComponent {
       }))
     };
 
-    this.notasService.guardarNotas(payload).subscribe(() => {
-      alert('Notas guardadas correctamente');
+    this.notasService.guardarNotas(payload).subscribe({
+      next: () => {
+        Swal.fire('Guardado', 'Las notas se guardaron correctamente', 'success');
+      },
+      error: (err) => {
+        console.error(err);
+        Swal.fire('Error', 'No fue posible guardar las notas', 'error');
+      }
     });
   }
 

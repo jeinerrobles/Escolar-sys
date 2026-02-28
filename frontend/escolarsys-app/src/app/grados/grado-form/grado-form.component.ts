@@ -71,7 +71,7 @@ export class GradoFormComponent implements OnInit {
     } else {
       this.gradoService.createGrado(data).subscribe({
         next: () => {
-          Swal.fire('Creado', 'El grado fue registrado correctamente', 'success');
+          Swal.fire('Creado', 'El grado fue creado correctamente', 'success');
           this.router.navigate(['panel/grados']);
         },
         error: (err) => {

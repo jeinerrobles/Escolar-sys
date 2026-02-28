@@ -30,32 +30,26 @@ export class UsuarioFormComponent implements OnInit {
 
   guardarUsuario() {
     if (this.editMode) {
-      this.usuariosService.updateUsuario(this.id!, this.usuario).subscribe(() => {
-        Swal.fire({
-            title: 'Usuario actualizado',
-            text: 'Usuario actualizado correctamente',
-            icon: 'success',
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 2000
-          }).then(() => {
-            this.router.navigate(['/panel/usuarios']);
-          });
+      this.usuariosService.updateUsuario(this.id!, this.usuario).subscribe({
+        next: () => {
+          Swal.fire('Actualizado', 'El usuario fue actualizado correctamente', 'success');
+          this.router.navigate(['panel/usuarios']);
+        },
+          error: (err) => {
+          console.error(err);
+          Swal.fire('Error', 'No se pudo actualizar el usuario', 'error');
+        }
       });
     } else {
-      this.usuariosService.createUsuario(this.usuario).subscribe(() => {
-        Swal.fire({
-            title: 'Usuario creado',
-            text: 'Usuario creado correctamente',
-            icon: 'success',
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 2000
-          }).then(() => {
-            this.router.navigate(['/panel/usuarios']);
-          });
+      this.usuariosService.createUsuario(this.usuario).subscribe({
+        next: () => {
+          Swal.fire('Creado', 'El usuario fue creado correctamente', 'success');
+          this.router.navigate(['panel/usuarios']);
+        },
+        error: (err) => {
+          console.error(err);
+          Swal.fire('Error', 'No se pudo crear el usuario', 'error');
+        }
       });
     }
   }

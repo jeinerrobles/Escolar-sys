@@ -62,18 +62,15 @@ export class EditarComponent implements OnInit {
       .filter((e) => e.seleccionado)
       .map((e) => e.id);
 
-    this.cursosService.updateCurso(this.curso.id, this.curso).subscribe(() => {
-      Swal.fire({
-        title: 'Curso Actualizado',
-        text: 'Curso actualizado correctamente',
-        icon: 'success',
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 2000
-      }).then(() => {
+    this.cursosService.updateCurso(this.curso.id, this.curso).subscribe({
+      next: () => {
+        Swal.fire('Actualizado', 'El curso fue actualizado correctamente', 'success');
         this.router.navigate(['panel/cursos']);
-      });
+      },
+      error: (err) => {
+        console.error(err);
+        Swal.fire('Error', 'No se pudo actualizar el curso', 'error');
+      }
     });
   }
 }

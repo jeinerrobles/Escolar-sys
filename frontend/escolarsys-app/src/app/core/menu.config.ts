@@ -46,7 +46,7 @@ export const MENU_ITEMS: MenuItem[] = [
     roles: [Role.ADMIN, Role.DOCENTE, Role.ESTUDIANTE]
   },
   {
-    label: 'Períodos Académicos',
+    label: 'Periodos Académicos',
     icon: 'bi bi-calendar-range',
     route: '/panel/periodos',
     roles: [Role.ADMIN]

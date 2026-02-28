@@ -12,7 +12,7 @@ import { UsuariosService } from 'src/app/usuarios/usuarios.service';
 })
 export class MateriaFormComponent implements OnInit {
   materiaForm!: FormGroup;
-  grados: any[] = []; 
+  grados: any[] = [];
   profesores: any[] = [];
   editMode = false;
   materiaId?: number;

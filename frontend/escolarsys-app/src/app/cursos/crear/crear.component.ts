@@ -45,18 +45,15 @@ export class CrearComponent implements OnInit {
       .filter((e) => e.seleccionado)
       .map((e) => e.id);
 
-    this.cursosService.createCurso(this.curso).subscribe(() => {
-      Swal.fire({
-        title: 'Curso creado',
-        text: 'Curso creado correctamente',
-        icon: 'success',
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 2000
-      }).then(() => {
-        this.router.navigate(['/panel/cursos']);
-      });
+    this.cursosService.createCurso(this.curso).subscribe({
+      next: () => {
+        Swal.fire('Creado', 'El curso fue creado correctamente', 'success');
+        this.router.navigate(['panel/cursos']);
+      },
+      error: (err) => {
+        console.error(err);
+        Swal.fire('Error', 'No se pudo crear el curso', 'error');
+      }
     });
   }
 }
