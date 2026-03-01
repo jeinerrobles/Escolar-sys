@@ -17,6 +17,10 @@ export class MateriaFormComponent implements OnInit {
   editMode = false;
   materiaId?: number;
 
+  // 🔎 FILTRO PROFESORES
+  filtroProfesor: string = '';
+  profesoresFiltrados: any[] = [];
+
   constructor(
     private fb: FormBuilder,
     private materiaService: MateriaService,
@@ -42,6 +46,7 @@ export class MateriaFormComponent implements OnInit {
     // Cargar profesores
     this.materiaService.getProfesores().subscribe(data => {
       this.profesores = data;
+      this.profesoresFiltrados = data;
     });
 
     // Modo edición
@@ -53,6 +58,20 @@ export class MateriaFormComponent implements OnInit {
         this.cargarMateria(this.materiaId);
       }
     });
+  }
+
+  filtrarProfesores(): void {
+
+    if (!this.filtroProfesor) {
+      this.profesoresFiltrados = [...this.profesores];
+    } else {
+
+      const t = this.filtroProfesor.toLowerCase();
+
+      this.profesoresFiltrados = this.profesores.filter(p =>
+        p.nombre.toLowerCase().includes(t)
+      );
+    }
   }
 
   cargarMateria(id: number): void {

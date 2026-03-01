@@ -108,19 +108,17 @@ export class MateriaController {
     try {
       const { nombre, id_grados, id_profesor } = req.body;
 
-      const grados = await gradoRepo.findBy({
-        id: id_grados
-      });
+    const grados = await gradoRepo.findByIds(id_grados || []);
 
       const profesor = id_profesor
         ? await userRepo.findOneBy({ id: id_profesor })
         : null;
 
-      const materia = materiaRepo.create({
-        nombre,
-        profesor: profesor || null,
-        grados
-      });
+    const materia = materiaRepo.create({
+      nombre,
+      profesor,
+      grados
+    });
 
       await materiaRepo.save(materia);
 
@@ -157,11 +155,9 @@ export class MateriaController {
           : null;
       }
 
-      if (id_grados !== undefined) {
-        materia.grados = await gradoRepo.findBy({
-          id: id_grados
-        });
-      }
+    if (id_grados !== undefined) {
+      materia.grados = await gradoRepo.findByIds(id_grados);
+    }
 
       await materiaRepo.save(materia);
 

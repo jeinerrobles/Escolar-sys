@@ -83,11 +83,11 @@
        class="alert alert-warning text-center">
 
     <ng-container *ngIf="terminoBusqueda; else sinUsuarios">
-      No se encontraron usuarios con ese filtro.
+      <i class="bi bi-info-circle"></i> No se encontraron usuarios con ese filtro.
     </ng-container>
 
     <ng-template #sinUsuarios>
-      No hay usuarios registrados.
+      <i class="bi bi-info-circle"></i> No hay usuarios registrados.
     </ng-template>
 
   </div>

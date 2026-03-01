@@ -115,11 +115,11 @@
              class="alert alert-warning text-center">
 
           <ng-container *ngIf="terminoBusqueda; else sinEstudiantes">
-            No se encontraron estudiantes con ese filtro.
+            <i class="bi bi-info-circle"></i> No se encontraron estudiantes con ese filtro.
           </ng-container>
 
           <ng-template #sinEstudiantes>
-            No hay estudiantes registrados.
+            <i class="bi bi-info-circle"></i> No hay estudiantes registrados.
           </ng-template>
 
         </div>
