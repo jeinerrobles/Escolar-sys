@@ -10,11 +10,31 @@ import { GradoService } from 'src/app/grados/grado.service';
   styleUrls: ['./editar.component.scss']
 })
 export class EditarComponent implements OnInit {
-  curso: any = { nombre: '', descripcion: '', profesorId: null, estudiantesIds: [], id_grado: null };
+
+  curso: any = {
+    id: null,
+    nombre: '',
+    descripcion: '',
+    profesorId: null,
+    estudiantesIds: [],
+    id_grado: null
+  };
+
   profesores: any[] = [];
   estudiantes: any[] = [];
-  selectAll: boolean = false;
   grados: any[] = [];
+
+  selectAll: boolean = false;
+
+  // 🔎 FILTRO + PAGINACIÓN
+  terminoBusqueda = '';
+
+  estudiantesFiltrados: any[] = [];
+  estudiantesPaginados: any[] = [];
+
+  paginaActual = 1;
+  registrosPorPagina = 8;
+  totalPaginas = 1;
 
   constructor(
     private cursosService: CursosService,
@@ -43,36 +63,76 @@ export class EditarComponent implements OnInit {
           ...e,
           seleccionado: this.curso.estudiantesIds.includes(e.id)
         }));
+
+        this.aplicarFiltroEstudiantes();
       });
     });
 
-    // Cargar profesores
-    this.cursosService.getProfesores().subscribe((data) => (this.profesores = data));
+    // Profesores
+    this.cursosService.getProfesores()
+      .subscribe(data => this.profesores = data);
 
-    this.gradoService.getGrados().subscribe((data) => (this.grados = data));
+    // Grados
+    this.gradoService.getGrados()
+      .subscribe(data => this.grados = data);
+  }
+
+  aplicarFiltroEstudiantes() {
+
+    if (!this.terminoBusqueda) {
+      this.estudiantesFiltrados = [...this.estudiantes];
+    } else {
+      const t = this.terminoBusqueda.toLowerCase();
+
+      this.estudiantesFiltrados = this.estudiantes.filter(e =>
+        e.nombre.toLowerCase().includes(t) ||
+        e.email.toLowerCase().includes(t)
+      );
+    }
+
+    this.paginaActual = 1;
+
+    this.totalPaginas = Math.ceil(
+      this.estudiantesFiltrados.length / this.registrosPorPagina
+    );
+
+    this.cambiarPagina(1);
+  }
+
+  cambiarPagina(p: number) {
+
+    if (p < 1 || p > this.totalPaginas) return;
+
+    this.paginaActual = p;
+
+    const inicio = (p - 1) * this.registrosPorPagina;
+    const fin = inicio + this.registrosPorPagina;
+
+    this.estudiantesPaginados =
+      this.estudiantesFiltrados.slice(inicio, fin);
   }
 
   toggleAllEstudiantes() {
-    this.estudiantes.forEach((e) => (e.seleccionado = this.selectAll));
+    this.estudiantesFiltrados.forEach(
+      e => (e.seleccionado = this.selectAll)
+    );
   }
 
   actualizarCurso() {
     // Recolectar IDs seleccionados
     this.curso.estudiantesIds = this.estudiantes
-      .filter((e) => e.seleccionado)
-      .map((e) => e.id);
+      .filter(e => e.seleccionado)
+      .map(e => e.id);
 
     this.cursosService.updateCurso(this.curso.id, this.curso).subscribe({
       next: () => {
         Swal.fire('Actualizado', 'El curso fue actualizado correctamente', 'success');
         this.router.navigate(['panel/cursos']);
       },
-      error: (err) => {
-        console.error(err);
+      error: () => {
         Swal.fire('Error', 'No se pudo actualizar el curso', 'error');
       }
     });
   }
+
 }
-
-

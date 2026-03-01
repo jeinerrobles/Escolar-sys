@@ -14,7 +14,28 @@ export class CrearComponent implements OnInit {
   profesores: any[] = [];
   estudiantes: any[] = [];
   selectAll: boolean = false;
-  grados: any[] = [];
+  grados: any[] = []
+
+  // ================================
+// 🔎 FILTRO + PAGINACIÓN ESTUDIANTES
+// ================================
+
+  terminoBusqueda = '';
+
+  estudiantesFiltrados: any[] = [];
+  estudiantesPaginados: any[] = [];
+
+  paginaActual = 1;
+  registrosPorPagina = 8;
+  totalPaginas = 1;
+
+
+// ================================
+// 🔎 FILTRO PROFESORES (DIRECTOR)
+// ================================
+
+  filtroProfesor = '';
+  profesoresFiltrados: any[] = [];
 
   constructor(
     private cursosService: CursosService,
@@ -24,10 +45,12 @@ export class CrearComponent implements OnInit {
   ngOnInit() {
     this.cursosService.getProfesores().subscribe((data) => {
       this.profesores = data;
+      this.profesoresFiltrados = data;
     });
 
     this.cursosService.getEstudiantes().subscribe((data) => {
       this.estudiantes = data;
+      this.aplicarFiltroEstudiantes();
     });
 
     this.gradoService.getGrados().subscribe((data) => {
@@ -36,7 +59,58 @@ export class CrearComponent implements OnInit {
   }
 
   toggleAllEstudiantes() {
-    this.estudiantes.forEach((e) => (e.seleccionado = this.selectAll));
+    this.estudiantesFiltrados.forEach(
+      e => (e.seleccionado = this.selectAll)
+    );
+  }
+
+  aplicarFiltroEstudiantes() {
+
+    if (!this.terminoBusqueda) {
+      this.estudiantesFiltrados = [...this.estudiantes];
+    } else {
+      const t = this.terminoBusqueda.toLowerCase();
+
+      this.estudiantesFiltrados = this.estudiantes.filter(e =>
+        e.nombre.toLowerCase().includes(t) ||
+        e.email.toLowerCase().includes(t)
+      );
+    }
+
+    this.paginaActual = 1;
+
+    this.totalPaginas = Math.ceil(
+      this.estudiantesFiltrados.length / this.registrosPorPagina
+    );
+
+    this.cambiarPagina(1);
+  }
+
+  cambiarPagina(p: number) {
+
+    if (p < 1 || p > this.totalPaginas) return;
+
+    this.paginaActual = p;
+
+    const inicio = (p - 1) * this.registrosPorPagina;
+    const fin = inicio + this.registrosPorPagina;
+
+    this.estudiantesPaginados =
+      this.estudiantesFiltrados.slice(inicio, fin);
+  }
+
+  filtrarProfesores() {
+
+    if (!this.filtroProfesor) {
+      this.profesoresFiltrados = [...this.profesores];
+    } else {
+      const t = this.filtroProfesor.toLowerCase();
+
+      this.profesoresFiltrados = this.profesores.filter(p =>
+        p.nombre.toLowerCase().includes(t)
+      );
+    }
+
   }
 
   crearCurso() {

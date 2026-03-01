@@ -12,24 +12,22 @@ import { AuthService } from 'src/app/auth/auth.service'; // 👈 IMPORTANTE
 export class MateriasListComponent implements OnInit {
   materias: any[] = [];
   cargando = false;
-  role: string | null = null; // 👈 guardamos el rol
+  role: string | null = null;
 
   constructor(
     private materiaService: MateriaService,
     private router: Router,
-    private authService: AuthService // 👈 inyectamos
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
-    this.role = this.authService.getUserRole(); // 👈 obtenemos rol
+    this.role = this.authService.getUserRole();
     this.obtenerMaterias();
   }
 
   // 👇 getter limpio para usar en el HTML
   get esAdmin(): boolean {
     return this.role === 'admin';
-    // ⚠️ si tu backend devuelve 'ADMIN' cambia por:
-    // return this.role === 'ADMIN';
   }
 
   obtenerMaterias(): void {
