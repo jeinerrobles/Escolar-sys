@@ -5,36 +5,77 @@
   </h3>
 
   <!-- FILTROS (solo para profesores/admin) -->
-  <div *ngIf="!esEstudiante" class="row g-3 mb-4">
+  <div *ngIf="!esEstudiante" class="mb-4">
 
-    <div class="col-md-4">
-      <label>Grado</label>
-      <select class="form-select" [(ngModel)]="filtro.grado" (change)="onGradoChange()">
-        <option [ngValue]="null">Seleccione</option>
-        <option *ngFor="let g of grados" [ngValue]="g">{{ g.nombre }}</option>
-      </select>
+    <!-- 🔹 FILA 1: GRADO Y CURSO -->
+    <div class="row g-3 mb-3">
+
+      <div class="col-md-6">
+        <label class="form-label">Grado</label>
+        <select class="form-select"
+                [(ngModel)]="filtro.grado"
+                (change)="onGradoChange()">
+          <option [ngValue]="null">Seleccione</option>
+          <option *ngFor="let g of grados" [ngValue]="g">
+            {{ g.nombre }}
+          </option>
+        </select>
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">Curso</label>
+        <select class="form-select"
+                [(ngModel)]="filtro.curso"
+                (change)="onCursoChange()"
+                [disabled]="!filtro.grado">
+          <option [ngValue]="null">Seleccione</option>
+          <option *ngFor="let c of cursos" [ngValue]="c">
+            {{ c.nombre }}
+          </option>
+        </select>
+      </div>
+
     </div>
 
-    <div class="col-md-4">
-      <label>Curso</label>
-      <select class="form-select" [(ngModel)]="filtro.curso" (change)="onCursoChange()" [disabled]="!filtro.grado">
-        <option [ngValue]="null">Seleccione</option>
-        <option *ngFor="let c of cursos" [ngValue]="c">{{ c.nombre }}</option>
-      </select>
-    </div>
+    <!-- 🔹 FILA 2: FILTRO Y SELECTOR DE ESTUDIANTE -->
+    <div class="row g-3">
 
-    <div class="col-md-4">
-      <label>Estudiante</label>
-      <select class="form-select" [(ngModel)]="filtro.estudiante"
-              (change)="cargarBoletin()"
-              [disabled]="!filtro.curso">
-        <option [ngValue]="null">Seleccione</option>
-        <option *ngFor="let e of estudiantes" [ngValue]="e">{{ e.nombre }}</option>
-      </select>
+      <!-- 🔹 FILTRO -->
+      <div class="col-md-6">
+        <label class="form-label">Buscar estudiante</label>
+        <input type="text"
+               class="form-control"
+               placeholder="Escriba nombre..."
+               [(ngModel)]="filtroEstudiante"
+               (input)="filtrarEstudiantes()"
+               [disabled]="!filtro.curso" />
+      </div>
+
+      <!-- 🔹 SELECTOR -->
+      <div class="col-md-6">
+        <label class="form-label">Estudiante</label>
+        <select class="form-select"
+                [(ngModel)]="filtro.estudiante"
+                (change)="cargarBoletin()"
+                [disabled]="!filtro.curso">
+          <option [ngValue]="null">Seleccione</option>
+
+          <option *ngFor="let e of estudiantesFiltrados"
+                  [ngValue]="e">
+            {{ e.nombre }}
+          </option>
+        </select>
+        <!-- SIN RESULTADOS -->
+        <div *ngIf="filtroEstudiante && estudiantesFiltrados.length === 0"
+             class="text-warning small mt-1">
+          <i class="bi bi-info-circle"></i>
+          No se encontraron estudiantes con ese filtro.
+        </div>
+      </div>
+
     </div>
 
   </div>
-
   <!-- INFO PARA ESTUDIANTE -->
   <div *ngIf="esEstudiante" class="alert alert-info mb-4">
     <div class="row">

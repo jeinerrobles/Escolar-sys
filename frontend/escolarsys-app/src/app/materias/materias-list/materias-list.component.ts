@@ -22,7 +22,7 @@ export class MateriasListComponent implements OnInit {
 
   // 📄 PAGINACIÓN
   paginaActual = 1;
-  registrosPorPagina = 6;
+  registrosPorPagina = 5;
   totalPaginas = 1;
 
   constructor(

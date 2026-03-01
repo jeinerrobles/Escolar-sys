@@ -45,16 +45,31 @@
         <!-- Director -->
         <div class="mb-3">
           <label class="form-label">Director de grupo</label>
+
+          <!-- 🔎 Buscador -->
+          <input type="text"
+                 class="form-control mb-2"
+                 placeholder="Buscar profesor..."
+                 [(ngModel)]="filtroProfesor"
+                 name="filtroProfesor"
+                 (input)="filtrarProfesores()">
+
+          <!-- 📋 Selector -->
           <select [(ngModel)]="curso.profesorId"
                   name="profesorId"
                   class="form-select">
 
-            <option *ngFor="let profesor of profesores"
+            <option *ngFor="let profesor of profesoresFiltrados"
                     [value]="profesor.id">
               {{ profesor.nombre }}
             </option>
 
           </select>
+          <!-- ⚠️ SIN RESULTADOS -->
+          <div *ngIf="profesoresFiltrados.length === 0"
+               class="text-warning small mt-1">
+            <i class="bi bi-info-circle"></i> No se encontraron profesores con ese filtro.
+          </div>
         </div>
 
         <!-- ===================== -->

@@ -31,6 +31,10 @@ export class BoletinComponent implements OnInit {
   // Variable para controlar vista de estudiante
   esEstudiante = false;
 
+  // 🔎 FILTRO ESTUDIANTES (solo admin/profesor)
+  filtroEstudiante: string = '';
+  estudiantesFiltrados: any[] = [];
+
   constructor(private boletinesService: BoletinesService) {}
 
   ngOnInit(): void {
@@ -110,15 +114,30 @@ export class BoletinComponent implements OnInit {
       // Profesor: ve todos los estudiantes del curso
       this.estudiantes = this.filtro.curso?.estudiantes || [];
     }
+    this.estudiantesFiltrados = [...this.estudiantes];
 
     this.filtro.estudiante = null;
     this.boletin = [];
   }
 
+  filtrarEstudiantes() {
+
+    if (!this.filtroEstudiante) {
+      this.estudiantesFiltrados = [...this.estudiantes];
+    } else {
+
+      const t = this.filtroEstudiante.toLowerCase();
+
+      this.estudiantesFiltrados = this.estudiantes.filter(e =>
+        e.nombre.toLowerCase().includes(t)
+      );
+    }
+  }
+
   // 🔹 Cargar boletín
   cargarBoletin() {
     if (!this.filtro.estudiante) {
-      alert('Debe seleccionar un estudiante');
+      Swal.fire('Atención', 'Debe seleccionar un estudiante', 'warning');
       return;
     }
 

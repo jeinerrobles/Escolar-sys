@@ -36,6 +36,13 @@ export class EditarComponent implements OnInit {
   registrosPorPagina = 8;
   totalPaginas = 1;
 
+  // ================================
+// 🔎 FILTRO PROFESORES (DIRECTOR)
+// ================================
+
+  filtroProfesor = '';
+  profesoresFiltrados: any[] = [];
+
   constructor(
     private cursosService: CursosService,
     private gradoService: GradoService,
@@ -69,12 +76,28 @@ export class EditarComponent implements OnInit {
     });
 
     // Profesores
-    this.cursosService.getProfesores()
-      .subscribe(data => this.profesores = data);
+    this.cursosService.getProfesores().subscribe((data) => {
+      this.profesores = data;
+      this.profesoresFiltrados = data;
+    });
 
     // Grados
     this.gradoService.getGrados()
       .subscribe(data => this.grados = data);
+  }
+
+  filtrarProfesores() {
+
+    if (!this.filtroProfesor) {
+      this.profesoresFiltrados = [...this.profesores];
+    } else {
+      const t = this.filtroProfesor.toLowerCase();
+
+      this.profesoresFiltrados = this.profesores.filter(p =>
+        p.nombre.toLowerCase().includes(t)
+      );
+    }
+
   }
 
   aplicarFiltroEstudiantes() {
