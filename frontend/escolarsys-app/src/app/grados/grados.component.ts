@@ -121,4 +121,32 @@ export class GradosComponent implements OnInit {
       }
     });
   }
+
+  // 📊 Barra proporcional según estudiantes
+  calcularProgreso(grado: any): number {
+
+    const maxEstudiantes = Math.max(
+      ...this.grados.map(g => g.total_estudiantes || 0),
+      1
+    );
+
+    return ((grado.total_estudiantes || 0) / maxEstudiantes) * 100;
+  }
+
+
+// 📚 Mostrar solo 3 materias si no está expandido
+  obtenerMateriasVisibles(grado: any) {
+
+    if (!grado.materias) return [];
+
+    return grado.expandido
+      ? grado.materias
+      : grado.materias.slice(0, 3);
+  }
+
+
+// 🔁 Toggle expandir
+  toggleMaterias(grado: any) {
+    grado.expandido = !grado.expandido;
+  }
 }

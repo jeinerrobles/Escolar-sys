@@ -1,93 +1,228 @@
-<div class="container mt-4">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h3 class="mb-0">
-      <i class="bi bi-diagram-3"></i> Gestión de Grados
-    </h3>
-    <button class="btn btn-primary" (click)="nuevoGrado()">
-      <i class="bi bi-plus-circle me-1"></i> Nuevo Grado
-    </button>
-  </div>
+<div class="container-fluid mt-4">
 
+  <!-- 🧭 HEADER -->
+  <div class="card shadow-lg border-0 rounded-4">
 
-  <!-- Mostrar tabla -->
-  <div *ngIf="grados.length > 0; else sinDatos">
-    <table class="table table-striped table-hover">
-      <thead class="table-light">
-        <tr>
-          <th>Grado</th>
-          <th class="text-center">Cursos</th>
-          <th class="text-center">Materias</th>
-          <th class="text-center">Estudiantes</th>
-          <th class="text-center">Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let grado of grados">
-          <td>{{ grado.nombre }}</td>
-          <td class="text-center">{{ grado.cursos?.length || 0 }}</td>
-          <td class="text-center">{{ grado.materias?.length || 0 }}</td>
-          <td class="text-center">{{ grado.total_estudiantes || 0 }}</td>
-          <td class="text-center">
-            <button class="btn btn-outline-primary btn-sm me-2"
-  (click)="verCursos(grado)">
-  <i class="bi bi-people"></i> Cursos
-</button>
+    <div class="card-header bg-gradient-primary text-white rounded-top-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
 
-            <button class="btn btn-outline-success btn-sm me-2"
-  (click)="verMaterias(grado)">
-  <i class="bi bi-journal-text"></i> Materias
-</button>
+      <h5 class="mb-0 fw-semibold">
+        <i class="bi bi-diagram-3 me-2 fs-4"></i>
+        Gestión de Grados
+      </h5>
 
-            <button class="btn btn-outline-info btn-sm me-2" (click)="verEstudiantes(grado)">
-              <i class="bi bi-person-lines-fill"></i> Estudiantes
-            </button>
+      <button class="btn btn-light btn-sm shadow-sm"
+              (click)="nuevoGrado()">
+        <i class="bi bi-plus-circle me-1"></i>
+        Nuevo Grado
+      </button>
 
-            <button class="btn btn-outline-warning btn-sm me-2" (click)="editarGrado(grado)">
-              <i class="bi bi-pencil-square"></i>
-            </button>
-            <button class="btn btn-outline-danger btn-sm" (click)="eliminarGrado(grado.id)">
-              <i class="bi bi-trash"></i>
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- Template vacío -->
-  <ng-template #sinDatos>
-    <div class="alert alert-warning text-center mt-4">
-      <i class="bi bi-info-circle"></i> No hay grados registrados.
     </div>
-  </ng-template>
+
+    <!-- 📋 CONTENIDO -->
+    <div class="card-body p-4">
+
+      <!-- TABLA -->
+      <div *ngIf="grados.length > 0; else sinDatos"
+           class="table-responsive">
+
+        <table class="table table-hover align-middle mb-0">
+
+          <thead class="table-light text-center">
+          <tr>
+            <th class="text-start ps-4">Grado</th>
+            <th>Cursos</th>
+            <th>Materias</th>
+            <th>Estudiantes</th>
+            <th>Acciones</th>
+          </tr>
+          </thead>
+
+          <tbody>
+
+          <tr *ngFor="let grado of grados">
+
+            <!-- 🎓 NOMBRE + DASHBOARD -->
+            <td class="ps-4">
+
+              <div class="fw-semibold mb-2">
+                {{ grado.nombre }}
+              </div>
+
+              <!-- MINI DASHBOARD -->
+              <div class="d-flex flex-wrap gap-2 small">
+
+      <span class="badge bg-primary-subtle text-primary">
+        📘 {{ grado.cursos?.length || 0 }} Cursos
+      </span>
+
+                <span class="badge bg-success-subtle text-success">
+        📚 {{ grado.materias?.length || 0 }} Materias
+      </span>
+
+                <span class="badge bg-info-subtle text-info">
+        👩‍🎓 {{ grado.total_estudiantes || 0 }} Estudiantes
+      </span>
+
+              </div>
+
+              <!-- 📊 BARRA VISUAL -->
+              <div class="progress mt-2" style="height:6px;">
+
+                <div class="progress-bar bg-primary"
+                     role="progressbar"
+                     [style.width.%]="calcularProgreso(grado)">
+                </div>
+
+              </div>
+
+            </td>
+
+            <!-- CURSOS -->
+            <td class="text-center">
+              {{ grado.cursos?.length || 0 }}
+            </td>
+
+            <!-- 📚 MATERIAS EXPANDIBLES -->
+            <td>
+
+              <div class="d-flex flex-wrap gap-1">
+
+                <ng-container *ngFor="let materia of obtenerMateriasVisibles(grado)">
+
+        <span class="badge bg-secondary">
+          {{ materia.nombre }}
+        </span>
+
+                </ng-container>
+
+                <!-- BOTÓN VER MÁS -->
+                <button *ngIf="grado.materias?.length > 3"
+                        class="btn btn-link btn-sm p-0"
+                        (click)="toggleMaterias(grado)">
+
+                  {{ grado.expandido ? 'Ver menos' : 'Ver más' }}
+
+                </button>
+
+              </div>
+
+            </td>
+
+            <!-- ESTUDIANTES -->
+            <td class="text-center">
+              {{ grado.total_estudiantes || 0 }}
+            </td>
+
+            <!-- ACCIONES -->
+            <td class="text-center">
+
+              <div class="d-flex flex-wrap justify-content-center gap-1">
+
+                <button class="btn btn-outline-warning btn-sm"
+                        (click)="editarGrado(grado)">
+                  <i class="bi bi-pencil-square"></i>
+                </button>
+
+                <button class="btn btn-outline-danger btn-sm"
+                        (click)="eliminarGrado(grado.id)">
+                  <i class="bi bi-trash"></i>
+                </button>
+
+              </div>
+
+            </td>
+
+          </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+      <!-- 🚫 SIN DATOS -->
+      <ng-template #sinDatos>
+        <div class="text-center py-5">
+
+          <i class="bi bi-diagram-3 fs-1 text-muted"></i>
+
+          <h6 class="mt-3 text-muted">
+            No hay grados registrados
+          </h6>
+
+          <p class="text-muted small">
+            Puedes crear el primero usando el botón superior
+          </p>
+
+          <button class="btn btn-primary btn-sm"
+                  (click)="nuevoGrado()">
+            <i class="bi bi-plus-circle"></i>
+            Crear grado
+          </button>
+
+        </div>
+      </ng-template>
+
+    </div>
+  </div>
+
 </div>
 
+<!-- ================================================= -->
+<!-- 🪟 MODAL PROFESIONAL -->
+<!-- ================================================= -->
 
-<!-- Modal Custom -->
-<div class="custom-modal-backdrop" *ngIf="mostrarModal"></div>
+<div class="custom-modal-backdrop"
+     *ngIf="mostrarModal"></div>
 
-<div class="custom-modal" *ngIf="mostrarModal">
-  <div class="custom-modal-content">
+<div class="custom-modal"
+     *ngIf="mostrarModal">
 
+  <div class="custom-modal-content shadow-lg">
+
+    <!-- HEADER -->
     <div class="custom-modal-header">
-      <h5 class="m-0">{{ modalTitulo }}</h5>
-      <button class="btn-close" (click)="cerrarModal()"></button>
+
+      <h5 class="m-0">
+        {{ modalTitulo }}
+      </h5>
+
+      <button class="btn-close"
+              (click)="cerrarModal()"></button>
+
     </div>
 
+    <!-- BODY -->
     <div class="custom-modal-body">
 
-      <input type="text" class="form-control mb-3" placeholder="Buscar..." [(ngModel)]="busqueda">
+      <!-- 🔍 BUSCADOR -->
+      <input type="text"
+             class="form-control mb-3"
+             placeholder="Buscar..."
+             [(ngModel)]="busqueda">
 
+      <!-- LISTA -->
       <ul class="list-group">
-        <li class="list-group-item" *ngFor="let item of filtrarLista()">
+
+        <li class="list-group-item"
+            *ngFor="let item of filtrarLista()">
+
           {{ item.nombre }}
+
         </li>
+
       </ul>
 
-      <div *ngIf="modalLista.length === 0" class="text-center text-muted mt-2">
+      <!-- SIN RESULTADOS -->
+      <div *ngIf="modalLista.length === 0"
+           class="text-center text-muted mt-3">
+
+        <i class="bi bi-info-circle"></i>
         No hay elementos para mostrar.
+
       </div>
 
     </div>
+
   </div>
 </div>

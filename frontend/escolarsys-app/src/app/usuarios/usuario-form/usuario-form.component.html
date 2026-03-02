@@ -1,42 +1,102 @@
-<div class="container mt-4">
-  <div class="card shadow-sm">
-    <div class="card-header bg-primary text-white">
-      <h5 class="mb-0">
-        <i class="bi" [ngClass]="editMode ? 'bi-pencil' : 'bi-person-plus'"></i>
+<div class="container-fluid mt-4">
+
+  <div class="card shadow-lg border-0 rounded-4">
+
+    <!-- HEADER -->
+    <div class="card-header bg-gradient-primary text-white rounded-top-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
+      <div class="d-flex align-items-center">
+      <i class="bi me-2 fs-4"
+         [ngClass]="editMode ? 'bi-pencil-square' : 'bi-person-plus-fill'">
+      </i>
+
+      <h5 class="mb-0 fw-semibold">
         {{ editMode ? 'Editar Usuario' : 'Crear Usuario' }}
       </h5>
+      </div>
     </div>
-    <div class="card-body">
+
+    <div class="card-body p-4">
+
       <form (ngSubmit)="guardarUsuario()" #form="ngForm">
-        <div class="mb-3">
-          <label>Nombre</label>
-          <input type="text" class="form-control" [(ngModel)]="usuario.nombre" name="nombre" required />
+
+        <div class="row g-3">
+
+          <!-- NOMBRE -->
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Nombre</label>
+
+            <input type="text"
+                   class="form-control shadow-sm"
+                   [(ngModel)]="usuario.nombre"
+                   name="nombre"
+                   required />
+          </div>
+
+          <!-- EMAIL -->
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Email</label>
+
+            <input type="email"
+                   class="form-control shadow-sm"
+                   [(ngModel)]="usuario.email"
+                   name="email"
+                   required />
+          </div>
+
+          <!-- CONTRASEÑA (solo crear) -->
+          <div class="col-md-6"
+               *ngIf="!editMode">
+
+            <label class="form-label fw-semibold">
+              Contraseña
+            </label>
+
+            <input type="password"
+                   class="form-control shadow-sm"
+                   [(ngModel)]="usuario.password"
+                   name="password"
+                   required />
+
+            <small class="text-muted">
+              Debe contener al menos 6 caracteres
+            </small>
+
+          </div>
+
+          <!-- ROL -->
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Rol</label>
+
+            <select class="form-select shadow-sm"
+                    [(ngModel)]="usuario.role"
+                    name="role">
+
+              <option value="admin">Administrador</option>
+              <option value="profesor">Profesor</option>
+              <option value="estudiante">Estudiante</option>
+
+            </select>
+          </div>
+
         </div>
 
-        <div class="mb-3">
-          <label>Email</label>
-          <input type="email" class="form-control" [(ngModel)]="usuario.email" name="email" required />
+        <!-- BOTONES -->
+        <div class="mt-4 d-flex flex-wrap gap-2">
+
+          <button class="btn btn-primary px-4" type="submit" [disabled]="form.invalid">
+            <i class="bi bi-check-circle me-1"></i>
+            {{ editMode ? 'Guardar Cambios' : 'Crear Usuario' }}
+          </button>
+
+          <button routerLink="/panel/usuarios"
+                  class="btn btn-outline-secondary px-4">
+            Cancelar
+          </button>
+
         </div>
 
-        <div class="mb-3" *ngIf="!editMode">
-          <label>Contraseña</label>
-          <input type="password" class="form-control" [(ngModel)]="usuario.password" name="password" required />
-        </div>
-
-        <div class="mb-3">
-          <label>Rol</label>
-          <select class="form-select" [(ngModel)]="usuario.role" name="role">
-            <option value="admin">Administrador</option>
-            <option value="profesor">Profesor</option>
-            <option value="estudiante">Estudiante</option>
-          </select>
-        </div>
-
-        <div class="mt-4 d-flex gap-2">
-            <button class="btn btn-success" type="submit">Guardar</button>
-            <button routerLink="/panel/usuarios" class="btn btn-secondary">Cancelar</button>
-        </div>
       </form>
+
     </div>
   </div>
 </div>

@@ -1,242 +1,279 @@
-<div class="container mt-4">
+<div class="container-fluid mt-4">
 
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h3><i class="bi bi-book"></i> Lista de Cursos</h3>
+  <div class="card shadow-lg border-0 rounded-4">
 
-    <button
-      *ngIf="esAdmin"
-      class="btn btn-primary"
-      (click)="crearCurso()">
-      <i class="bi bi-plus-circle"></i> Crear Curso
-    </button>
-  </div>
-  <div class="mb-3">
-    <input
-      type="text"
-      class="form-control"
-      placeholder="Buscar curso..."
-      [(ngModel)]="terminoBusqueda"
-      (input)="aplicarFiltroCursos()"
-    />
-  </div>
-  <table *ngIf="cursosFiltrados.length > 0"
-         class="table table-bordered table-hover align-middle">
-    <thead class="table-light">
-      <tr>
-        <th>ID</th>
-        <th>Nombre</th>
-        <th>Profesor</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-
-    <tbody>
-      <ng-container *ngFor="let curso of cursosPaginados">
-
-        <!-- FILA PRINCIPAL -->
-        <tr>
-          <td class="text-center">{{ curso.id }}</td>
-          <td>{{ curso.nombre }}</td>
-          <td>
-            {{ curso.profesor?.nombre || 'Sin profesor' }}
-          </td>
-
-          <td class="text-center">
-
-            <!-- BOTÓN VER ESTUDIANTES -->
-         <button
-            type="button"
-            class="btn btn-outline-info btn-sm me-2"
-            (click)="abrirModal(curso)"
-          >
-            <i class="bi bi-people"></i>
-          </button>
-            <!-- SOLO ADMIN VE EDITAR Y ELIMINAR -->
-            <ng-container *ngIf="role === 'admin'">
-
-              <button
-                type="button"
-                class="btn btn-outline-warning btn-sm me-2"
-                [routerLink]="['editar', curso.id]"
-              >
-                <i class="bi bi-pencil-square"></i>
-              </button>
-
-              <button
-                type="button"
-                class="btn btn-outline-danger btn-sm"
-                (click)="eliminar(curso.id)"
-              >
-                <i class="bi bi-trash"></i>
-              </button>
-
-            </ng-container>
-
-          </td>
-        </tr>
-
-        <!-- FILA DESPLEGABLE DE ESTUDIANTES -->
-        <tr *ngIf="cursoExpandido === curso.id">
-          <td colspan="4">
-            <div class="p-3 bg-light rounded">
-
-              <h6 class="mb-2">Estudiantes del curso:</h6>
-
-              <ul *ngIf="curso.estudiantes?.length > 0; else sinEstudiantes">
-                <li *ngFor="let est of curso.estudiantes">
-                  {{ est.nombre }}
-                </li>
-              </ul>
-
-              <ng-template #sinEstudiantes>
-                <p class="text-muted mb-0">
-                  <i class="bi bi-info-circle"></i> No hay estudiantes asignados.
-                </p>
-              </ng-template>
-
-            </div>
-          </td>
-        </tr>
-
-      </ng-container>
-    </tbody>
-
-  </table>
-  <nav *ngIf="totalPaginas > 1">
-    <ul class="pagination justify-content-center">
-
-      <li class="page-item" [class.disabled]="paginaActual === 1">
-        <button class="page-link"
-                (click)="cambiarPaginaCursos(paginaActual - 1)">
-          Anterior
-        </button>
-      </li>
-
-      <li class="page-item"
-          *ngFor="let p of [].constructor(totalPaginas); let i = index"
-          [class.active]="paginaActual === i + 1">
-
-        <button class="page-link"
-                (click)="cambiarPaginaCursos(i + 1)">
-          {{ i + 1 }}
-        </button>
-      </li>
-
-      <li class="page-item"
-          [class.disabled]="paginaActual === totalPaginas">
-
-        <button class="page-link"
-                (click)="cambiarPaginaCursos(paginaActual + 1)">
-          Siguiente
-        </button>
-      </li>
-
-    </ul>
-  </nav>
-
-  <!-- MENSAJE SI NO HAY CURSOS -->
-  <div *ngIf="cursosFiltrados.length === 0"
-       class="alert alert-warning text-center">
-
-    <ng-container *ngIf="terminoBusqueda; else sinCursos">
-      <i class="bi bi-info-circle"></i> No se encontraron cursos con ese filtro.
-    </ng-container>
-
-    <ng-template #sinCursos>
-      <i class="bi bi-info-circle"></i> No hay cursos registrados.
-    </ng-template>
-
-  </div>
-<!-- MODAL ESTUDIANTES -->
-<div class="modal fade" id="estudiantesModal" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content">
-
-      <div class="modal-header">
-        <h5 class="modal-title">
-          Estudiantes - {{ cursoSeleccionado?.nombre }}
-        </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    <!-- HEADER -->
+    <div class="card-header bg-gradient-primary text-white rounded-top-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
+      <div class="d-flex align-items-center">
+        <i class="bi bi-book me-2 fs-4"></i>
+        <h5 class="mb-0 fw-semibold">Gestión de Cursos</h5>
       </div>
 
-      <div class="modal-body">
+      <button *ngIf="esAdmin"
+              class="btn btn-light btn-sm shadow-sm"
+              (click)="crearCurso()">
+        <i class="bi bi-plus-circle me-1"></i>
+        Crear Curso
+      </button>
+    </div>
 
-        <!-- BUSCADOR -->
-        <input
-          type="text"
-          class="form-control mb-3"
-          placeholder="Buscar estudiante..."
-          [(ngModel)]="filtro"
-          (input)="aplicarFiltroEstudiantes()"
-        />
+    <div class="card-body p-4">
 
-        <!-- LISTA CON SCROLL -->
-        <div style="max-height: 400px; overflow-y: auto;">
+      <!-- 🔎 BUSCADOR -->
+      <div class="input-group mb-3">
+        <span class="input-group-text bg-light">
+          <i class="bi bi-search"></i>
+        </span>
 
-          <!-- 🔹 LISTA SOLO SI HAY RESULTADOS -->
-          <ul *ngIf="estudiantesFiltradosList.length > 0"
-              class="list-group">
+        <input type="text"
+               class="form-control"
+               placeholder="Buscar curso..."
+               [(ngModel)]="terminoBusqueda"
+               (input)="aplicarFiltroCursos()" />
+      </div>
 
-            <li
-              *ngFor="let est of estudiantesPaginados"
-              class="list-group-item"
-            >
-              {{ est.nombre }}
-            </li>
+      <!-- 📋 TABLA -->
+      <div class="table-responsive">
 
-          </ul>
+        <table *ngIf="cursosFiltrados.length > 0"
+               class="table table-hover align-middle">
 
-          <!-- 🔹 PAGINACIÓN -->
-          <nav *ngIf="totalPaginasEstudiantes > 1" class="mt-3">
-            <ul class="pagination justify-content-center">
+          <thead class="table-light">
+          <tr>
+            <th>Curso</th>
+            <th>Profesor</th>
+            <th class="text-center">Estudiantes</th>
+            <th class="text-center">Acciones</th>
+          </tr>
+          </thead>
 
-              <li class="page-item"
-                  [class.disabled]="paginaEstudiantes === 1">
-                <button class="page-link"
-                        (click)="cambiarPaginaEstudiantes(paginaEstudiantes - 1)">
-                  Anterior
-                </button>
-              </li>
+          <tbody>
 
-              <li class="page-item"
-                  *ngFor="let p of [].constructor(totalPaginasEstudiantes); let i = index"
-                  [class.active]="paginaEstudiantes === i + 1">
+          <ng-container *ngFor="let curso of cursosPaginados">
 
-                <button class="page-link"
-                        (click)="cambiarPaginaEstudiantes(i + 1)">
-                  {{ i + 1 }}
-                </button>
-              </li>
+            <!-- FILA PRINCIPAL -->
+            <tr>
 
-              <li class="page-item"
-                  [class.disabled]="paginaEstudiantes === totalPaginasEstudiantes">
 
-                <button class="page-link"
-                        (click)="cambiarPaginaEstudiantes(paginaEstudiantes + 1)">
-                  Siguiente
-                </button>
+
+              <td class="fw-semibold text-primary">
+                {{ curso.nombre }}
+              </td>
+
+              <td>
+                  <span *ngIf="curso.profesor; else sinProfesor">
+                    <i class="bi bi-person-circle me-1 text-muted"></i>
+                    {{ curso.profesor.nombre }}
+                  </span>
+
+                <ng-template #sinProfesor>
+                    <span class="text-muted fst-italic">
+                      Sin profesor
+                    </span>
+                </ng-template>
+              </td>
+
+              <!-- TOTAL ESTUDIANTES -->
+              <td class="text-center">
+                  <span class="badge bg-info text-dark">
+                    {{ curso.estudiantes?.length || 0 }}
+                  </span>
+              </td>
+
+              <!-- ACCIONES -->
+              <td class="text-center">
+
+                <div class="d-flex justify-content-center gap-1 flex-wrap">
+
+                  <button
+                    type="button"
+                    class="btn btn-outline-info btn-sm me-2"
+                    (click)="abrirModal(curso)"
+                  >
+                    <i class="bi bi-people"></i>
+                  </button>
+
+                  <ng-container *ngIf="role === 'admin'">
+
+                    <button type="button"
+                            class="btn btn-outline-warning btn-sm"
+                            [routerLink]="['editar', curso.id]">
+                      <i class="bi bi-pencil"></i>
+                    </button>
+
+                    <button type="button"
+                            class="btn btn-outline-danger btn-sm"
+                            (click)="eliminar(curso.id)">
+                      <i class="bi bi-trash"></i>
+                    </button>
+
+                  </ng-container>
+
+                </div>
+
+              </td>
+
+            </tr>
+
+
+          </ng-container>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+      <!-- 📄 PAGINACIÓN -->
+      <nav *ngIf="totalPaginas > 1" class="mt-3">
+        <ul class="pagination justify-content-center mb-0">
+
+          <li class="page-item" [class.disabled]="paginaActual === 1">
+            <button class="page-link"
+                    (click)="cambiarPaginaCursos(paginaActual - 1)">
+              ←
+            </button>
+          </li>
+
+          <li class="page-item"
+              *ngFor="let p of [].constructor(totalPaginas); let i = index"
+              [class.active]="paginaActual === i + 1">
+
+            <button class="page-link"
+                    (click)="cambiarPaginaCursos(i + 1)">
+              {{ i + 1 }}
+            </button>
+          </li>
+
+          <li class="page-item"
+              [class.disabled]="paginaActual === totalPaginas">
+
+            <button class="page-link"
+                    (click)="cambiarPaginaCursos(paginaActual + 1)">
+              →
+            </button>
+          </li>
+
+        </ul>
+      </nav>
+
+      <div *ngIf="cursosFiltrados.length === 0"
+           class="text-center py-5">
+
+        <i class="bi bi-journal-x display-4 text-warning"></i>
+
+        <h5 class="mt-3">
+
+          <ng-container *ngIf="terminoBusqueda; else sinCursos">
+            No se encontraron cursos con ese filtro
+          </ng-container>
+
+          <ng-template #sinCursos>
+            No hay cursos registrados
+          </ng-template>
+
+        </h5>
+
+        <p class="text-muted">
+          Ajustar la búsqueda
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+  <!-- MODAL ESTUDIANTES -->
+  <div class="modal fade" id="estudiantesModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h5 class="modal-title">
+            Estudiantes - {{ cursoSeleccionado?.nombre }}
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body">
+
+          <!-- BUSCADOR -->
+          <input
+            type="text"
+            class="form-control mb-3"
+            placeholder="Buscar estudiante..."
+            [(ngModel)]="filtro"
+            (input)="aplicarFiltroEstudiantes()"
+          />
+
+          <!-- LISTA CON SCROLL -->
+          <div style="max-height: 400px; overflow-y: auto;">
+
+            <!-- 🔹 LISTA SOLO SI HAY RESULTADOS -->
+            <ul *ngIf="estudiantesFiltradosList.length > 0"
+                class="list-group">
+
+              <li
+                *ngFor="let est of estudiantesPaginados"
+                class="list-group-item"
+              >
+                {{ est.nombre }}
               </li>
 
             </ul>
-          </nav>
 
-          <!-- 🔹 MENSAJE SI NO HAY RESULTADOS -->
-          <div *ngIf="estudiantesFiltradosList.length === 0"
-               class="text-center py-4 text-muted">
+            <!-- 🔹 PAGINACIÓN -->
+            <nav *ngIf="totalPaginasEstudiantes > 1" class="mt-3">
+              <ul class="pagination justify-content-center">
 
-            <i class="bi bi-search fs-3"></i>
+                <li class="page-item"
+                    [class.disabled]="paginaEstudiantes === 1">
+                  <button class="page-link"
+                          (click)="cambiarPaginaEstudiantes(paginaEstudiantes - 1)">
+                    ←
+                  </button>
+                </li>
 
-            <p class="mb-0 mt-2">
-              No se encontraron estudiantes
-            </p>
+                <li class="page-item"
+                    *ngFor="let p of [].constructor(totalPaginasEstudiantes); let i = index"
+                    [class.active]="paginaEstudiantes === i + 1">
+
+                  <button class="page-link"
+                          (click)="cambiarPaginaEstudiantes(i + 1)">
+                    {{ i + 1 }}
+                  </button>
+                </li>
+
+                <li class="page-item"
+                    [class.disabled]="paginaEstudiantes === totalPaginasEstudiantes">
+
+                  <button class="page-link"
+                          (click)="cambiarPaginaEstudiantes(paginaEstudiantes + 1)">
+                    →
+                  </button>
+                </li>
+
+              </ul>
+            </nav>
+
+            <!-- 🔹 MENSAJE SI NO HAY RESULTADOS -->
+            <div *ngIf="estudiantesFiltradosList.length === 0"
+                 class="text-center py-4 text-muted">
+
+              <i class="bi bi-search fs-3"></i>
+
+              <p class="mb-0 mt-2">
+                No se encontraron estudiantes
+              </p>
+
+            </div>
 
           </div>
 
         </div>
 
       </div>
-
     </div>
   </div>
-</div>
+
 </div>

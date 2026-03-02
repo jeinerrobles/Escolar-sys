@@ -1,144 +1,195 @@
-<div class="container mt-4">
+<div class="container-fluid mt-4">
 
-  <h3 class="mb-3">
-    <i class="bi bi-card-checklist"></i> Boletín Académico
-  </h3>
+  <!-- 🔷 PANEL -->
+  <div class="card shadow-lg border-0 rounded-4">
 
-  <!-- FILTROS (solo para profesores/admin) -->
-  <div *ngIf="!esEstudiante" class="mb-4">
-
-    <!-- 🔹 FILA 1: GRADO Y CURSO -->
-    <div class="row g-3 mb-3">
-
-      <div class="col-md-6">
-        <label class="form-label">Grado</label>
-        <select class="form-select"
-                [(ngModel)]="filtro.grado"
-                (change)="onGradoChange()">
-          <option [ngValue]="null">Seleccione</option>
-          <option *ngFor="let g of grados" [ngValue]="g">
-            {{ g.nombre }}
-          </option>
-        </select>
-      </div>
-
-      <div class="col-md-6">
-        <label class="form-label">Curso</label>
-        <select class="form-select"
-                [(ngModel)]="filtro.curso"
-                (change)="onCursoChange()"
-                [disabled]="!filtro.grado">
-          <option [ngValue]="null">Seleccione</option>
-          <option *ngFor="let c of cursos" [ngValue]="c">
-            {{ c.nombre }}
-          </option>
-        </select>
-      </div>
-
+    <!-- HEADER -->
+    <div class="card-header bg-gradient-primary text-white rounded-top-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
+      <h5 class="mb-0 fw-semibold">
+        <i class="bi bi-card-checklist me-2 fs-4"></i>
+        Boletín Académico
+      </h5>
     </div>
 
-    <!-- 🔹 FILA 2: FILTRO Y SELECTOR DE ESTUDIANTE -->
-    <div class="row g-3">
+    <div class="card-body bg-light">
 
-      <!-- 🔹 FILTRO -->
-      <div class="col-md-6">
-        <label class="form-label">Buscar estudiante</label>
-        <input type="text"
-               class="form-control"
-               placeholder="Escriba nombre..."
-               [(ngModel)]="filtroEstudiante"
-               (input)="filtrarEstudiantes()"
-               [disabled]="!filtro.curso" />
+      <!-- 🔹 FILTROS ADMIN / PROFESOR -->
+      <div *ngIf="!esEstudiante" class="card mb-4 shadow-sm border-0">
+
+        <div class="card-body p-4">
+
+          <h6 class="text-muted mb-3">
+            <i class="bi bi-funnel me-1"></i> Filtros de búsqueda
+          </h6>
+
+          <!-- FILA 1 -->
+          <div class="row g-3 mb-3">
+
+            <div class="col-12 col-md-6">
+              <label class="form-label fw-semibold">Grado</label>
+              <select class="form-select"
+                      [(ngModel)]="filtro.grado"
+                      (change)="onGradoChange()">
+                <option [ngValue]="null">Seleccione</option>
+                <option *ngFor="let g of grados" [ngValue]="g">
+                  {{ g.nombre }}
+                </option>
+              </select>
+            </div>
+
+            <div class="col-12 col-md-6">
+              <label class="form-label fw-semibold">Curso</label>
+              <select class="form-select"
+                      [(ngModel)]="filtro.curso"
+                      (change)="onCursoChange()"
+                      [disabled]="!filtro.grado">
+                <option [ngValue]="null">Seleccione</option>
+                <option *ngFor="let c of cursos" [ngValue]="c">
+                  {{ c.nombre }}
+                </option>
+              </select>
+            </div>
+
+          </div>
+
+          <!-- FILA 2 -->
+          <div class="row g-3">
+
+            <!-- BUSCAR -->
+            <div class="col-12 col-md-6">
+              <label class="form-label fw-semibold">Buscar estudiante</label>
+              <input type="text"
+                     class="form-control"
+                     placeholder="Escriba nombre..."
+                     [(ngModel)]="filtroEstudiante"
+                     (input)="filtrarEstudiantes()"
+                     [disabled]="!filtro.curso" />
+            </div>
+
+            <!-- SELECT -->
+            <div class="col-12 col-md-6">
+              <label class="form-label fw-semibold">Estudiante</label>
+              <select class="form-select"
+                      [(ngModel)]="filtro.estudiante"
+                      (change)="cargarBoletin()"
+                      [disabled]="!filtro.curso">
+                <option [ngValue]="null">Seleccione</option>
+
+                <option *ngFor="let e of estudiantesFiltrados"
+                        [ngValue]="e">
+                  {{ e.nombre }}
+                </option>
+              </select>
+              <div *ngIf="filtroEstudiante && estudiantesFiltrados.length === 0"
+                   class="text-warning small mt-1">
+                <i class="bi bi-info-circle"></i>
+                No se encontraron estudiantes con ese filtro.
+              </div>
+            </div>
+
+          </div>
+
+        </div>
       </div>
 
-      <!-- 🔹 SELECTOR -->
-      <div class="col-md-6">
-        <label class="form-label">Estudiante</label>
-        <select class="form-select"
-                [(ngModel)]="filtro.estudiante"
-                (change)="cargarBoletin()"
-                [disabled]="!filtro.curso">
-          <option [ngValue]="null">Seleccione</option>
+      <!-- 🔹 INFO ESTUDIANTE -->
+      <div *ngIf="esEstudiante"
+           class="alert alert-info shadow-sm border-0 mb-4">
 
-          <option *ngFor="let e of estudiantesFiltrados"
-                  [ngValue]="e">
-            {{ e.nombre }}
-          </option>
-        </select>
-        <!-- SIN RESULTADOS -->
-        <div *ngIf="filtroEstudiante && estudiantesFiltrados.length === 0"
-             class="text-warning small mt-1">
-          <i class="bi bi-info-circle"></i>
-          No se encontraron estudiantes con ese filtro.
+        <div class="row text-center text-md-start">
+
+          <div class="col-12 col-md-4 mb-2 mb-md-0">
+            <strong>Grado:</strong><br>
+            {{ filtro.grado?.nombre || 'Cargando...' }}
+          </div>
+
+          <div class="col-12 col-md-4 mb-2 mb-md-0">
+            <strong>Curso:</strong><br>
+            {{ filtro.curso?.nombre || 'Cargando...' }}
+          </div>
+
+          <div class="col-12 col-md-4">
+            <strong>Estudiante:</strong><br>
+            {{ user.nombre }}
+          </div>
+
+        </div>
+      </div>
+
+      <!-- 🔹 LOADING -->
+      <div *ngIf="loading" class="text-center my-5">
+        <div class="spinner-border text-primary"></div>
+        <p class="mt-2 text-muted">Cargando boletín...</p>
+      </div>
+
+      <!-- 🔹 BOLETÍN -->
+      <div *ngIf="mostrarBoletin" class="card shadow-sm border-0">
+
+        <div class="card-body">
+
+          <h5 class="mb-3">
+            Boletín de:
+            <strong>{{ getNombreEstudiante() }}</strong>
+
+            <span *ngIf="esEstudiante"
+                  class="badge bg-info ms-2">
+              Vista estudiante
+            </span>
+          </h5>
+
+          <!-- TABLA RESPONSIVE -->
+          <div class="table-responsive">
+
+            <table class="table table-bordered table-hover text-center align-middle">
+
+              <thead class="table-primary">
+              <tr>
+                <th>Materia</th>
+                <th>P1</th>
+                <th>P2</th>
+                <th>P3</th>
+                <th>P4</th>
+                <th>Promedio</th>
+              </tr>
+              </thead>
+
+              <tbody>
+
+              <tr *ngIf="boletin.materias?.length === 0">
+                <td colspan="6" class="text-muted">
+                  No hay registros de notas
+                </td>
+              </tr>
+
+              <tr *ngFor="let m of boletin.materias">
+                <td class="text-start">{{ m.materia }}</td>
+                <td>{{ m.periodos[1] ?? '-' }}</td>
+                <td>{{ m.periodos[2] ?? '-' }}</td>
+                <td>{{ m.periodos[3] ?? '-' }}</td>
+                <td>{{ m.periodos[4] ?? '-' }}</td>
+                <td class="fw-bold text-primary">
+                  {{ m.promedio ?? '-' }}
+                </td>
+              </tr>
+
+              </tbody>
+
+              <tfoot *ngIf="boletin.materias?.length > 0">
+              <tr class="table-light">
+                <th colspan="5">Promedio General</th>
+                <th class="text-success fs-5">
+                  {{ boletin.promedioGeneral ?? '-' }}
+                </th>
+              </tr>
+              </tfoot>
+
+            </table>
+
+          </div>
+
         </div>
       </div>
 
     </div>
-
   </div>
-  <!-- INFO PARA ESTUDIANTE -->
-  <div *ngIf="esEstudiante" class="alert alert-info mb-4">
-    <div class="row">
-      <div class="col-md-4">
-        <strong>Grado:</strong> {{ filtro.grado?.nombre || 'Cargando...' }}
-      </div>
-      <div class="col-md-4">
-        <strong>Curso:</strong> {{ filtro.curso?.nombre || 'Cargando...' }}
-      </div>
-      <div class="col-md-4">
-        <strong>Estudiante:</strong> {{ user.nombre }}
-      </div>
-    </div>
-  </div>
-
-  <!-- LOADING -->
-  <div *ngIf="loading" class="text-center my-4">
-    <div class="spinner-border text-primary"></div>
-    <p class="mt-2">Cargando boletín...</p>
-  </div>
-
-  <!-- BOLETÍN -->
-  <div *ngIf="mostrarBoletin">
-
-    <h6 class="mb-3">
-      Boletín de: <strong>{{ getNombreEstudiante() }}</strong>
-      <span *ngIf="esEstudiante" class="badge bg-info ms-2">Vista de estudiante</span>
-    </h6>
-
-    <table class="table table-bordered text-center">
-      <thead class="table-light">
-      <tr>
-        <th>Materia</th>
-        <th>Periodo 1</th>
-        <th>Periodo 2</th>
-        <th>Periodo 3</th>
-        <th>Periodo 4</th>
-        <th>Promedio</th>
-      </tr>
-      </thead>
-
-      <tbody>
-      <tr *ngIf="boletin.materias?.length === 0">
-        <td colspan="6" class="text-center text-muted">No hay registros de notas</td>
-      </tr>
-      <tr *ngFor="let m of boletin.materias">
-        <td class="text-start">{{ m.materia }}</td>
-        <td>{{ m.periodos[1] ?? '-' }}</td>
-        <td>{{ m.periodos[2] ?? '-' }}</td>
-        <td>{{ m.periodos[3] ?? '-' }}</td>
-        <td>{{ m.periodos[4] ?? '-' }}</td>
-        <td class="fw-bold">{{ m.promedio ?? '-' }}</td>
-      </tr>
-      </tbody>
-
-      <tfoot *ngIf="boletin.materias?.length > 0">
-      <tr class="table-light">
-        <th colspan="5">Promedio General:</th>
-        <th>{{ boletin.promedioGeneral ?? '-' }}</th>
-      </tr>
-      </tfoot>
-    </table>
-
-  </div>
-
 </div>

@@ -1,25 +1,83 @@
-<div class="container mt-4">
-  <h4>
-    <i class="bi bi-calendar-range"></i> Control de Periodos Académicos (Habilitar/Cerrar)
-  </h4>
+<div class="container-fluid mt-4">
 
-  <div class="card p-3 mt-3">
+  <div class="card shadow-lg border-0 rounded-4">
 
-    <div
-      class="form-check form-switch mb-2"
-      *ngFor="let p of periodos"
-    >
-      <input
-        class="form-check-input"
-        type="checkbox"
-        [checked]="p.habilitado"
-        (change)="togglePeriodo(p)"
-      />
-
-      <label class="form-check-label">
-        Periodo {{ p.periodo }}
-      </label>
+    <!-- HEADER -->
+    <div class="card-header bg-gradient-primary text-white rounded-top-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
+      <div class="d-flex align-items-center">
+        <i class="bi bi-sliders me-2 fs-4"></i>
+        <h5 class="mb-0 fw-semibold">Habilitar / Cerrar Periodos</h5>
+      </div>
     </div>
 
+    <div class="card-body p-4">
+
+      <!-- GRID RESPONSIVE -->
+      <div class="row g-3">
+
+        <div class="col-md-6 col-lg-4"
+             *ngFor="let p of periodos">
+
+          <div class="border rounded-4 p-3 shadow-sm bg-light h-100">
+
+            <!-- TÍTULO + BADGE -->
+            <div class="d-flex justify-content-between align-items-center mb-2">
+
+              <h6 class="mb-0 fw-semibold">
+                Periodo {{ p.periodo }}
+              </h6>
+
+              <!-- BADGE ESTADO -->
+              <span
+                class="badge"
+                [ngClass]="p.habilitado
+                  ? 'bg-success'
+                  : 'bg-danger'">
+
+                {{ p.habilitado ? 'Abierto' : 'Cerrado' }}
+
+              </span>
+
+            </div>
+
+            <!-- SWITCH -->
+            <div class="form-check form-switch d-flex align-items-center">
+
+              <input
+                class="form-check-input me-2"
+                type="checkbox"
+                [checked]="p.habilitado"
+                (change)="togglePeriodo(p)"
+                id="periodo_{{ p.periodo }}"
+              />
+
+              <label
+                class="form-check-label small text-muted"
+                for="periodo_{{ p.periodo }}">
+
+                {{ p.habilitado
+                ? 'Habilitado para registro de notas'
+                : 'Bloqueado' }}
+
+              </label>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- MENSAJE SI NO HAY PERIODOS -->
+      <div *ngIf="periodos.length === 0"
+           class="alert alert-warning text-center mt-3">
+
+        <i class="bi bi-info-circle"></i>
+        No hay periodos académicos registrados.
+
+      </div>
+
+    </div>
   </div>
 </div>

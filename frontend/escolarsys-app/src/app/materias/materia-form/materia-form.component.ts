@@ -8,7 +8,8 @@ import { UsuariosService } from 'src/app/usuarios/usuarios.service';
 
 @Component({
   selector: 'app-materia-form',
-  templateUrl: './materia-form.component.html'
+  templateUrl: './materia-form.component.html',
+  styleUrls: ['./materia-form.component.scss']
 })
 export class MateriaFormComponent implements OnInit {
   materiaForm!: FormGroup;

@@ -1,102 +1,181 @@
-<div class="container mt-4">
+<div class="container-fluid mt-4">
 
-  <h3 class="mb-3">
-    <i class="bi bi-clipboard-check"></i> Gestión de Notas
-  </h3>
+  <!-- 🔷 PANEL PRINCIPAL -->
+  <div class="card shadow-lg border-0 rounded-4">
 
-  <!-- FILTROS -->
-  <div class="card p-3 mb-4">
-    <div class="row g-3">
-
-      <div class="col-md-3">
-        <label>Grado</label>
-        <select class="form-select" [(ngModel)]="filtro.grado" (change)="onGradoChange(); onFiltroChange()">
-          <option value="">Seleccione</option>
-          <option *ngFor="let g of grados" [ngValue]="g">
-            {{ g.nombre }}
-          </option>
-        </select>
-      </div>
-
-      <div class="col-md-3">
-        <label>Curso</label>
-        <select class="form-select" [(ngModel)]="filtro.curso" (change)="onFiltroChange()" [disabled]="!cursos.length">
-          <option value="">Seleccione</option>
-          <option *ngFor="let c of cursos" [ngValue]="c">
-            {{ c.nombre }}
-          </option>
-        </select>
-      </div>
-
-      <div class="col-md-3">
-        <label>Materia</label>
-        <select class="form-select" [(ngModel)]="filtro.materia" (change)="onFiltroChange()" [disabled]="!materias.length">
-          <option value="">Seleccione</option>
-          <option *ngFor="let m of materias" [ngValue]="m">
-            {{ m.nombre }}
-          </option>
-        </select>
-      </div>
-
-      <div class="col-md-3">
-        <label>Periodo</label>
-        <select class="form-select" [(ngModel)]="filtro.periodo" (change)="onPeriodoChange(); onFiltroChange()" [disabled]="!filtro.curso || !filtro.materia">
-
-        <option value="">Seleccione</option>
-
-          <option *ngFor="let p of periodos" [value]="p.periodo">
-            Periodo {{ p.periodo }}
-            <span *ngIf="!p.habilitado"> (Cerrado)</span>
-          </option>
-        </select>
-      </div>
-
-    </div>
-
-    <button class="btn btn-primary mt-3" (click)="cargarNotas()" [disabled]="!filtro.grado || !filtro.curso || !filtro.materia || !filtro.periodo">
-    <i class="bi bi-search"></i> Cargar estudiantes
-    </button>
-  </div>
-
-  <!-- LOADING -->
-  <div *ngIf="loading" class="text-center my-4">
-    <div class="spinner-border text-primary"></div>
-  </div>
-
-  <!-- TABLA -->
-  <div *ngIf="mostrarTabla">
-
-    <div class="card p-3">
-      <h5 class="mb-3">
-        Periodo {{ filtro.periodo }} - {{ filtro.materia.nombre }} - {{ filtro.curso.nombre }}
+    <!-- HEADER -->
+    <div class="card-header bg-gradient-primary text-white rounded-top-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
+      <h5 class="mb-0 fw-semibold">
+        <i class="bi bi-clipboard-check me-2 fs-4"></i>
+        Gestión de Notas
       </h5>
-
-      <table class="table table-bordered">
-        <thead class="table-light">
-          <tr>
-            <th>#</th>
-            <th>Estudiante</th>
-            <th class="text-center">Nota</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          <tr *ngFor="let e of estudiantes; let i = index">
-            <td>{{ i + 1 }}</td>
-            <td>{{ e.nombre }}</td>
-            <td class="text-center">
-              <input type="number" class="form-control text-center" [(ngModel)]="e.nota" [disabled]="!puedeEditar()"
-                     min="0" max="5" step="0.1" (blur)="validarNota(e)" />
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
-      <button class="btn btn-success" (click)="guardarNotas()" *ngIf="puedeEditar()">
-        <i class="bi bi-save"></i> Guardar notas
-      </button>
     </div>
 
+    <div class="card-body bg-light">
+
+      <!-- 🔹 FILTROS -->
+      <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+
+          <h6 class="text-muted mb-3">
+            <i class="bi bi-funnel me-1"></i> Filtros académicos
+          </h6>
+
+          <div class="row g-3">
+
+            <!-- GRADO -->
+            <div class="col-12 col-md-6 col-lg-3">
+              <label class="form-label fw-semibold">Grado</label>
+              <select class="form-select"
+                      [(ngModel)]="filtro.grado"
+                      (change)="onGradoChange(); onFiltroChange()">
+                <option value="">Seleccione</option>
+                <option *ngFor="let g of grados" [ngValue]="g">
+                  {{ g.nombre }}
+                </option>
+              </select>
+            </div>
+
+            <!-- CURSO -->
+            <div class="col-12 col-md-6 col-lg-3">
+              <label class="form-label fw-semibold">Curso</label>
+              <select class="form-select"
+                      [(ngModel)]="filtro.curso"
+                      (change)="onFiltroChange()"
+                      [disabled]="!cursos.length">
+                <option value="">Seleccione</option>
+                <option *ngFor="let c of cursos" [ngValue]="c">
+                  {{ c.nombre }}
+                </option>
+              </select>
+            </div>
+
+            <!-- MATERIA -->
+            <div class="col-12 col-md-6 col-lg-3">
+              <label class="form-label fw-semibold">Materia</label>
+              <select class="form-select"
+                      [(ngModel)]="filtro.materia"
+                      (change)="onFiltroChange()"
+                      [disabled]="!materias.length">
+                <option value="">Seleccione</option>
+                <option *ngFor="let m of materias" [ngValue]="m">
+                  {{ m.nombre }}
+                </option>
+              </select>
+            </div>
+
+            <!-- PERIODO -->
+            <div class="col-12 col-md-6 col-lg-3">
+              <label class="form-label fw-semibold">Periodo</label>
+              <select class="form-select"
+                      [(ngModel)]="filtro.periodo"
+                      (change)="onPeriodoChange(); onFiltroChange()"
+                      [disabled]="!filtro.curso || !filtro.materia">
+
+                <option value="">Seleccione</option>
+
+                <option *ngFor="let p of periodos"
+                        [value]="p.periodo">
+
+                  Periodo {{ p.periodo }}
+
+
+                </option>
+
+              </select>
+              <div *ngIf="filtro.periodo" class="mt-2">
+                <span *ngIf="getPeriodoHabilitado()" class="badge bg-success">
+                  <i class="bi bi-unlock"></i> Periodo abierto
+                </span>
+
+                <span *ngIf="!getPeriodoHabilitado()" class="badge bg-danger">
+                  <i class="bi bi-lock"></i> Periodo cerrado
+                </span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- BOTÓN -->
+          <div class="text-end mt-4">
+            <button class="btn btn-primary px-4"
+                    (click)="cargarNotas()"
+                    [disabled]="!filtro.grado || !filtro.curso || !filtro.materia || !filtro.periodo">
+              <i class="bi bi-search me-1"></i>
+              Cargar estudiantes
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- 🔹 LOADING -->
+      <div *ngIf="loading" class="text-center my-5">
+        <div class="spinner-border text-primary"></div>
+        <p class="mt-2 text-muted">Cargando estudiantes...</p>
+      </div>
+
+      <!-- 🔹 TABLA -->
+      <div *ngIf="mostrarTabla" class="card shadow-sm border-0">
+
+        <div class="card-body">
+
+          <h5 class="mb-3">
+            Periodo {{ filtro.periodo }} -
+            <span class="text-primary">{{ filtro.materia.nombre }}</span>
+            <span class="text-muted"> {{ filtro.curso.nombre }}</span>
+          </h5>
+
+          <div class="table-responsive">
+
+            <table class="table table-bordered table-hover align-middle">
+
+              <thead class="table-primary text-center">
+              <tr>
+                <th class="text-start">Estudiante</th>
+                <th style="width: 150px;">Nota</th>
+              </tr>
+              </thead>
+
+              <tbody>
+
+              <tr *ngFor="let e of estudiantes; let i = index">
+
+                <td>{{ e.nombre }}</td>
+
+                <td class="text-center">
+                  <input type="number"
+                         class="form-control text-center"
+                         [ngClass]="getNotaClass(e.nota)"
+                         [(ngModel)]="e.nota"
+                         [disabled]="!puedeEditar()"
+                         min="0"
+                         max="5"
+                         step="0.1"
+                         (blur)="validarNota(e)" />
+                </td>
+              </tr>
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+          <!-- BOTÓN GUARDAR -->
+          <div class="text-end mt-3" *ngIf="puedeEditar()">
+            <button class="btn btn-primary px-4"
+                    (click)="guardarNotas()">
+              <i class="bi bi-check-circle me-1"></i>
+              Guardar notas
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
   </div>
 
 </div>

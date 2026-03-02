@@ -198,4 +198,21 @@ export class NotasGestionComponent {
     });
   }
 
+  // 🎨 Clase según nota
+  getNotaClass(nota: number | null): string {
+
+    if (nota === null || nota === undefined) return '';
+
+    if (nota >= 4) return 'nota-alta';
+    if (nota >= 3) return 'nota-media';
+
+    return 'nota-baja';
+  }
+
+  getPeriodoHabilitado():boolean {
+    if (!this.filtro.periodo) return false;
+    const periodo = this.periodos.find(p => p.periodo === Number(this.filtro.periodo));
+    return periodo ? periodo.habilitado : false;
+  }
+
 }

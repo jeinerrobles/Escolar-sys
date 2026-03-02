@@ -185,4 +185,9 @@ export class ListaComponent implements OnInit {
     this.router.navigate(['panel/cursos/crear']);
   }
 
+  toggleExpandir(id: number) {
+    this.cursoExpandido =
+      this.cursoExpandido === id ? null : id;
+  }
+
 }
